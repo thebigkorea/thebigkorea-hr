@@ -256,6 +256,13 @@ async function searchAttendanceByDate() {
       .getElementById("storeSelect")
       .value;
 
+  const keyword =
+    document
+      .getElementById("searchName")
+      .value
+      .trim()
+      .toLowerCase();
+
   const box =
     document.getElementById("storeResult");
 
@@ -298,9 +305,32 @@ async function searchAttendanceByDate() {
       return;
     }
 
+    let rows = result.rows;
+
+    if (keyword) {
+
+      rows =
+        rows.filter(function(row){
+
+          return String(row.name || "")
+            .toLowerCase()
+            .includes(keyword);
+        });
+    }
+
+    if (rows.length === 0) {
+
+      box.innerHTML =
+        `<div class="empty">
+          검색 결과가 없습니다.
+        </div>`;
+
+      return;
+    }
+
     box.innerHTML = "";
 
-    result.rows.forEach(function(row){
+    rows.forEach(function(row){
 
       box.innerHTML +=
         createAttendanceItem(row);
@@ -364,6 +394,15 @@ function createAttendanceItem(row){
         시간 수정
       </button>
 
+      <button
+        class="delete-btn"
+        onclick="deleteAttendance(
+          '${row.rowIndex}'
+        )"
+      >
+        기록 삭제
+      </button>
+
     </div>
   `;
 }
@@ -405,6 +444,48 @@ async function editAttendance(
     }
 
     alert("수정 완료");
+
+    loadTodayEmployees();
+
+    searchAttendanceByDate();
+
+  } catch(err) {
+
+    console.error(err);
+
+    alert("오류가 발생했습니다.");
+  }
+}
+
+async function deleteAttendance(rowIndex){
+
+  const ok =
+    confirm("정말 삭제하시겠습니까?");
+
+  if (!ok) return;
+
+  try {
+
+    const result =
+      await apiRequest({
+
+        action:"deleteAttendance",
+
+        rowIndex:rowIndex
+
+      });
+
+    if (!result.success) {
+
+      alert(
+        result.message ||
+        "삭제 실패"
+      );
+
+      return;
+    }
+
+    alert("삭제 완료");
 
     loadTodayEmployees();
 

@@ -257,3 +257,30 @@ button:disabled{
     font-size:22px;
   }
 }
+.dashboard-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+  margin-bottom:18px;
+}
+
+.dashboard-card{
+  background:#f3f5f9;
+  border-radius:18px;
+  padding:18px 12px;
+  text-align:center;
+  border:1px solid #e5e7eb;
+}
+
+.dashboard-number{
+  font-size:32px;
+  font-weight:900;
+  color:#173b72;
+}
+
+.dashboard-label{
+  margin-top:6px;
+  font-size:15px;
+  font-weight:800;
+  color:#666;
+}

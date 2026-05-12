@@ -523,3 +523,68 @@ async function apiRequest(data) {
 
   return response.json();
 }
+async function downloadMonthlyExcel(){
+
+  const date =
+    document.getElementById("searchDate").value;
+
+  if (!date) {
+    alert("날짜를 선택해주세요.");
+    return;
+  }
+
+  const month =
+    date.substring(0, 7);
+
+  try {
+
+    const result =
+      await apiRequest({
+
+        action:"downloadAttendanceExcel",
+
+        month:month
+      });
+
+    if (!result.success) {
+
+      alert("다운로드 실패");
+      return;
+    }
+
+    let csv = "";
+
+    result.rows.forEach(function(row){
+
+      csv +=
+        row.join(",") + "\n";
+    });
+
+    const blob =
+      new Blob(
+        ["\uFEFF" + csv],
+        { type:"text/csv;charset=utf-8;" }
+      );
+
+    const url =
+      URL.createObjectURL(blob);
+
+    const a =
+      document.createElement("a");
+
+    a.href = url;
+
+    a.download =
+      `${month}_출퇴근기록.csv`;
+
+    a.click();
+
+    URL.revokeObjectURL(url);
+
+  } catch(err){
+
+    console.error(err);
+
+    alert("엑셀 다운로드 오류");
+  }
+}

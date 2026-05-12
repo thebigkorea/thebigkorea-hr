@@ -1,5 +1,5 @@
 const API_URL =
-"https://script.google.com/macros/s/AKfycbyriJGrYUjjWwnnb7L8HEUHgoRXXo_ma-aOTQi8fqpVomQfxbmBE18YH9LmWEHrKENsWA/exec";
+"https://script.google.com/macros/s/AKfycbyWzaqWVY4hNKWXK5cHz6Ipcat5WlFpVaTAYHefwqevLvMZrm41Oebsiv75-ACBP9BYzA/exec";
 
 window.onload = function () {
   const login = localStorage.getItem("tk_admin_login");
@@ -12,6 +12,7 @@ window.onload = function () {
 
   loadStores();
   setTodayDate();
+  setSummaryMonth();
 };
 
 function setTodayDate() {
@@ -21,6 +22,14 @@ function setTodayDate() {
   const dd = String(d.getDate()).padStart(2, "0");
 
   document.getElementById("searchDate").value = `${yyyy}-${mm}-${dd}`;
+}
+
+function setSummaryMonth() {
+  const d = new Date();
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+
+  document.getElementById("summaryMonth").value = `${yyyy}-${mm}`;
 }
 
 async function adminLogin() {
@@ -87,15 +96,12 @@ async function loadStores() {
     if (!result.success) return;
 
     const select = document.getElementById("storeSelect");
-
     select.innerHTML = `<option value="">전체 점포</option>`;
 
     result.stores.forEach(function (store) {
       const opt = document.createElement("option");
-
       opt.value = store.storeCode;
       opt.innerText = "[" + store.region + "] " + store.storeName;
-
       select.appendChild(opt);
     });
 
@@ -106,7 +112,6 @@ async function loadStores() {
 
 async function loadTodayEmployees() {
   const box = document.getElementById("todayList");
-
   box.innerHTML = `<div class="empty">불러오는 중...</div>`;
 
   try {
@@ -116,7 +121,6 @@ async function loadTodayEmployees() {
 
     if (!result.success || !result.rows || result.rows.length === 0) {
       resetDashboard();
-
       box.innerHTML = `<div class="empty">오늘 출퇴근 기록이 없습니다.</div>`;
       return;
     }
@@ -134,9 +138,64 @@ async function loadTodayEmployees() {
   } catch (err) {
     console.error(err);
     resetDashboard();
-
     box.innerHTML = `<div class="empty">조회 중 오류가 발생했습니다.</div>`;
   }
+}
+
+async function loadMonthlySummary() {
+  const month = document.getElementById("summaryMonth").value;
+  const box = document.getElementById("monthlySummaryResult");
+
+  if (!month) {
+    alert("조회 월을 선택해주세요.");
+    return;
+  }
+
+  box.innerHTML = `<div class="empty">월 근무 요약을 불러오는 중...</div>`;
+
+  try {
+    const result = await apiRequest({
+      action: "getMonthlyEmployeeSummary",
+      month: month
+    });
+
+    if (!result.success || !result.rows || result.rows.length === 0) {
+      box.innerHTML = `<div class="empty">조회된 월 근무 요약이 없습니다.</div>`;
+      return;
+    }
+
+    box.innerHTML = "";
+
+    result.rows.forEach(function (row) {
+      box.innerHTML += createMonthlySummaryItem(row);
+    });
+
+  } catch (err) {
+    console.error(err);
+    box.innerHTML = `<div class="empty">월 근무 요약 조회 중 오류가 발생했습니다.</div>`;
+  }
+}
+
+function createMonthlySummaryItem(row) {
+  return `
+    <div class="attendance-item">
+      <div class="attendance-top">
+        <div class="emp-name">${row.name || ""}</div>
+        <div class="emp-type type-in">${row.workDays || 0}일</div>
+      </div>
+
+      <div class="emp-store">
+        ${row.store || ""}
+      </div>
+
+      <div class="emp-time">
+        전화번호 : ${formatPhone(row.phone || "")}<br>
+        총 근무시간 : <b>${row.totalText || "0시간 0분"}</b><br>
+        평균 출근 : ${row.avgIn || "-"}<br>
+        평균 퇴근 : ${row.avgOut || "-"}
+      </div>
+    </div>
+  `;
 }
 
 async function searchAttendanceByDate() {
@@ -327,7 +386,6 @@ async function loadEmployees() {
 
   } catch (err) {
     console.error(err);
-
     box.innerHTML = `<div class="empty">직원 조회 중 오류가 발생했습니다.</div>`;
   }
 }
@@ -358,6 +416,52 @@ async function loadEmployeeWorkSummary(phone) {
     if (el) {
       el.innerText = "이번달 누적 근무 : 오류";
     }
+  }
+}
+
+async function downloadMonthlyExcel() {
+  const date = document.getElementById("searchDate").value;
+
+  if (!date) {
+    alert("날짜를 선택해주세요.");
+    return;
+  }
+
+  const month = date.substring(0, 7);
+
+  try {
+    const result = await apiRequest({
+      action: "downloadAttendanceExcel",
+      month: month
+    });
+
+    if (!result.success) {
+      alert("다운로드 실패");
+      return;
+    }
+
+    let csv = "";
+
+    result.rows.forEach(function (row) {
+      csv += row.join(",") + "\n";
+    });
+
+    const blob = new Blob(["\uFEFF" + csv], {
+      type: "text/csv;charset=utf-8;"
+    });
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+
+    a.href = url;
+    a.download = `${month}_출퇴근기록.csv`;
+    a.click();
+
+    URL.revokeObjectURL(url);
+
+  } catch (err) {
+    console.error(err);
+    alert("엑셀 다운로드 오류");
   }
 }
 
@@ -522,69 +626,4 @@ async function apiRequest(data) {
   });
 
   return response.json();
-}
-async function downloadMonthlyExcel(){
-
-  const date =
-    document.getElementById("searchDate").value;
-
-  if (!date) {
-    alert("날짜를 선택해주세요.");
-    return;
-  }
-
-  const month =
-    date.substring(0, 7);
-
-  try {
-
-    const result =
-      await apiRequest({
-
-        action:"downloadAttendanceExcel",
-
-        month:month
-      });
-
-    if (!result.success) {
-
-      alert("다운로드 실패");
-      return;
-    }
-
-    let csv = "";
-
-    result.rows.forEach(function(row){
-
-      csv +=
-        row.join(",") + "\n";
-    });
-
-    const blob =
-      new Blob(
-        ["\uFEFF" + csv],
-        { type:"text/csv;charset=utf-8;" }
-      );
-
-    const url =
-      URL.createObjectURL(blob);
-
-    const a =
-      document.createElement("a");
-
-    a.href = url;
-
-    a.download =
-      `${month}_출퇴근기록.csv`;
-
-    a.click();
-
-    URL.revokeObjectURL(url);
-
-  } catch(err){
-
-    console.error(err);
-
-    alert("엑셀 다운로드 오류");
-  }
 }

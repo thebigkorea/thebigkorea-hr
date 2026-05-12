@@ -16,7 +16,6 @@
     <div class="desc">출퇴근 통합 관리 시스템</div>
 
     <input type="password" id="adminPassword" placeholder="관리자 비밀번호 입력">
-
     <button id="loginBtn" class="btn-login" onclick="adminLogin()">로그인</button>
 
     <div id="loginMessage" class="message"></div>
@@ -76,14 +75,22 @@
     </div>
 
     <div class="card">
+      <div class="section-title">월 근무 요약 대시보드</div>
+
+      <label class="form-label">조회 월</label>
+      <input type="month" id="summaryMonth">
+
+      <button class="search-btn" onclick="loadMonthlySummary()">월 근무 요약 조회</button>
+
+      <div id="monthlySummaryResult">
+        <div class="empty">월 근무 요약을 조회해주세요.</div>
+      </div>
+    </div>
+
+    <div class="card">
       <div class="section-title">날짜 / 점포별 조회</div>
 
-      <button
-        class="excel-btn"
-        onclick="downloadMonthlyExcel()"
-        >
-        월별 엑셀 다운로드
-        </button>
+      <button class="excel-btn" onclick="downloadMonthlyExcel()">월별 엑셀 다운로드</button>
 
       <label class="form-label">조회 날짜</label>
       <input type="date" id="searchDate">

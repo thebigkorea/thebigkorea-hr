@@ -16,20 +16,11 @@
 
 <div class="wrap">
 
-  <!-- 로그인 화면 -->
   <div id="loginScreen" class="card">
 
-    <div class="logo">
-      더큰코리아
-    </div>
-
-    <div class="title">
-      관리자 로그인
-    </div>
-
-    <div class="desc">
-      출퇴근 통합 관리 시스템
-    </div>
+    <div class="logo">더큰코리아</div>
+    <div class="title">관리자 로그인</div>
+    <div class="desc">출퇴근 통합 관리 시스템</div>
 
     <input
       type="password"
@@ -49,19 +40,12 @@
 
   </div>
 
-  <!-- 관리자 화면 -->
   <div id="adminScreen" class="hidden">
 
     <div class="top-bar">
-
       <div>
-        <div class="logo small">
-          더큰코리아
-        </div>
-
-        <div class="top-title">
-          출퇴근 관리자
-        </div>
+        <div class="logo small">더큰코리아</div>
+        <div class="top-title">출퇴근 관리자</div>
       </div>
 
       <button
@@ -70,36 +54,43 @@
       >
         로그아웃
       </button>
-
     </div>
 
-    <!-- 오늘 출근 현황 -->
     <div class="card">
 
-      <div class="section-title">
-        오늘 출퇴근 현황
-      </div>
+      <div class="section-title">오늘 출퇴근 현황</div>
+
       <div class="dashboard-grid">
-  <div class="dashboard-card">
-    <div class="dashboard-number" id="totalCount">0</div>
-    <div class="dashboard-label">전체 기록</div>
-  </div>
+        <div class="dashboard-card">
+          <div class="dashboard-number" id="totalCount">0</div>
+          <div class="dashboard-label">전체 기록</div>
+        </div>
 
-  <div class="dashboard-card">
-    <div class="dashboard-number" id="checkInCount">0</div>
-    <div class="dashboard-label">출근</div>
-  </div>
+        <div class="dashboard-card">
+          <div class="dashboard-number" id="checkInCount">0</div>
+          <div class="dashboard-label">출근</div>
+        </div>
 
-  <div class="dashboard-card">
-    <div class="dashboard-number" id="checkOutCount">0</div>
-    <div class="dashboard-label">퇴근</div>
-  </div>
+        <div class="dashboard-card">
+          <div class="dashboard-number" id="checkOutCount">0</div>
+          <div class="dashboard-label">퇴근</div>
+        </div>
 
-  <div class="dashboard-card">
-    <div class="dashboard-number" id="workingCount">0</div>
-    <div class="dashboard-label">근무중</div>
-  </div>
-</div>   
+        <div class="dashboard-card">
+          <div class="dashboard-number" id="workingCount">0</div>
+          <div class="dashboard-label">근무중</div>
+        </div>
+      </div>
+
+      <div class="sub-title">현재 근무중 직원</div>
+      <div id="workingList">
+        <div class="empty">근무중 직원이 없습니다.</div>
+      </div>
+
+      <div class="sub-title">지점별 출근 현황</div>
+      <div id="storeSummary">
+        <div class="empty">지점별 데이터가 없습니다.</div>
+      </div>
 
       <button
         class="refresh-btn"
@@ -109,41 +100,35 @@
       </button>
 
       <div id="todayList">
-
-        <div class="empty">
-          데이터 불러오는 중...
-        </div>
-
+        <div class="empty">데이터 불러오는 중...</div>
       </div>
 
     </div>
 
-    <!-- 점포별 조회 -->
     <div class="card">
 
-      <div class="section-title">
-        점포별 조회
-      </div>
+      <div class="section-title">날짜 / 점포별 조회</div>
 
+      <label class="form-label">조회 날짜</label>
+      <input
+        type="date"
+        id="searchDate"
+      >
+
+      <label class="form-label">점포 선택</label>
       <select id="storeSelect">
-        <option value="">
-          전체 점포
-        </option>
+        <option value="">전체 점포</option>
       </select>
 
       <button
         class="search-btn"
-        onclick="searchStoreAttendance()"
+        onclick="searchAttendanceByDate()"
       >
         조회하기
       </button>
 
       <div id="storeResult">
-
-        <div class="empty">
-          점포를 조회해주세요.
-        </div>
-
+        <div class="empty">조회 조건을 선택해주세요.</div>
       </div>
 
     </div>

@@ -16,6 +16,7 @@
 
 <div class="wrap">
 
+  <!-- 로그인 화면 -->
   <div id="loginScreen" class="card">
 
     <div class="logo">더큰코리아</div>
@@ -40,6 +41,7 @@
 
   </div>
 
+  <!-- 관리자 화면 -->
   <div id="adminScreen" class="hidden">
 
     <div class="top-bar">
@@ -56,6 +58,7 @@
       </button>
     </div>
 
+    <!-- 오늘 출퇴근 현황 -->
     <div class="card">
 
       <div class="section-title">오늘 출퇴근 현황</div>
@@ -105,6 +108,7 @@
 
     </div>
 
+    <!-- 날짜 / 점포별 조회 -->
     <div class="card">
 
       <div class="section-title">날짜 / 점포별 조회</div>
@@ -114,14 +118,14 @@
         type="date"
         id="searchDate"
       >
-      
-      <label class="form-label">직원명 검색</label>
 
+      <label class="form-label">직원명 검색</label>
       <input
-       type="text"
-       id="searchName"
+        type="text"
+        id="searchName"
         placeholder="직원 이름 입력"
-        />
+      >
+
       <label class="form-label">점포 선택</label>
       <select id="storeSelect">
         <option value="">전체 점포</option>
@@ -136,6 +140,31 @@
 
       <div id="storeResult">
         <div class="empty">조회 조건을 선택해주세요.</div>
+      </div>
+
+    </div>
+
+    <!-- 직원 현황 -->
+    <div class="card">
+
+      <div class="section-title">직원 현황</div>
+
+      <label class="form-label">직원명 검색</label>
+      <input
+        type="text"
+        id="employeeKeyword"
+        placeholder="직원 이름 입력"
+      >
+
+      <button
+        class="search-btn"
+        onclick="loadEmployees()"
+      >
+        직원 조회
+      </button>
+
+      <div id="employeeResult">
+        <div class="empty">직원을 조회해주세요.</div>
       </div>
 
     </div>

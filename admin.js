@@ -749,3 +749,79 @@ async function apiRequest(data){
 
   return response.json();
 }
+async function loadEmployees() {
+  const keyword = document
+    .getElementById("employeeKeyword")
+    .value
+    .trim();
+
+  const box = document.getElementById("employeeResult");
+
+  box.innerHTML = `
+    <div class="empty">
+      직원 정보를 불러오는 중...
+    </div>
+  `;
+
+  try {
+    const result = await apiRequest({
+      action: "getEmployees",
+      keyword: keyword
+    });
+
+    if (!result.success || !result.rows || result.rows.length === 0) {
+      box.innerHTML = `
+        <div class="empty">
+          조회된 직원이 없습니다.
+        </div>
+      `;
+      return;
+    }
+
+    box.innerHTML = "";
+
+    result.rows.forEach(function(emp) {
+      box.innerHTML += `
+        <div class="attendance-item">
+          <div class="attendance-top">
+            <div class="emp-name">
+              ${emp.name || ""}
+            </div>
+
+            <div class="emp-type type-in">
+              ${emp.status || "재직"}
+            </div>
+          </div>
+
+          <div class="emp-store">
+            ${emp.brand || ""} / ${emp.storeName || ""}
+          </div>
+
+          <div class="emp-time">
+            전화번호 : ${formatPhone(emp.phone || "")}<br>
+            등록일 : ${formatDate(emp.registeredAt || "")}
+          </div>
+        </div>
+      `;
+    });
+
+  } catch (err) {
+    console.error(err);
+
+    box.innerHTML = `
+      <div class="empty">
+        직원 조회 중 오류가 발생했습니다.
+      </div>
+    `;
+  }
+}
+
+function formatPhone(phone) {
+  phone = String(phone || "").replace(/[^0-9]/g, "");
+
+  if (phone.length === 11) {
+    return phone.replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3");
+  }
+
+  return phone;
+}

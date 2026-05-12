@@ -1,5 +1,5 @@
 const API_URL =
-"https://script.google.com/macros/s/AKfycbz2xfC-tvf7aGqg653KN-hXiKqQe52vzpuD2mtGw5HSbZyp5c3GNmwZNTs8nKRM2yLWag/exec";
+"https://script.google.com/macros/s/AKfycbyWzaqWVY4hNKWXK5cHz6Ipcat5WlFpVaTAYHefwqevLvMZrm41Oebsiv75-ACBP9BYzA/exec";
 
 window.onload = function () {
 

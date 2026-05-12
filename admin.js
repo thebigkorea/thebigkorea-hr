@@ -1,5 +1,5 @@
 const API_URL =
-"https://script.google.com/macros/s/AKfycbyWzaqWVY4hNKWXK5cHz6Ipcat5WlFpVaTAYHefwqevLvMZrm41Oebsiv75-ACBP9BYzA/exec";
+"https://script.google.com/macros/s/AKfycbyriJGrYUjjWwnnb7L8HEUHgoRXXo_ma-aOTQi8fqpVomQfxbmBE18YH9LmWEHrKENsWA/exec";
 
 window.onload = function () {
   const login = localStorage.getItem("tk_admin_login");

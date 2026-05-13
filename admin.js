@@ -351,7 +351,8 @@ async function loadPayrollSummary() {
       const slipId = "payrollSlipText_" + index;
 
       box.innerHTML += `
-        <div class="attendance-item payroll-slip">
+        <div class="attendance-item payroll-slip"
+        id="payrollCard_${index}">
 
           <textarea id="${slipId}" class="copy-textarea">${slipText}</textarea>
 
@@ -368,9 +369,19 @@ async function loadPayrollSummary() {
             계산방식 : ${row.calcType || "-"}
           </div>
 
-          <button class="copy-btn" onclick="copyPayrollSlip('${slipId}')">
+          <div class="payroll-btn-row">
+
+          <button class="copy-btn"
+            onclick="copyPayrollSlip('${slipId}')">
             급여명세서 복사
-          </button>
+         </button>
+
+         <button class="save-btn"
+             onclick="savePayrollImage('payrollCard_${index}')">
+             이미지 저장
+           </button>
+
+         </div>
 
           <div class="pay-section">
             <div class="pay-title">지급내역</div>
@@ -977,4 +988,31 @@ function copyPayrollSlip(id) {
   document.execCommand("copy");
   el.classList.add("copy-textarea");
   alert("급여명세서가 복사되었습니다.");
+}
+async function savePayrollImage(id) {
+
+  const target =
+    document.getElementById(id);
+
+  if (!target) {
+    alert("급여명세서를 찾을 수 없습니다.");
+    return;
+  }
+
+  const canvas =
+    await html2canvas(target, {
+      scale: 2,
+      backgroundColor: "#ffffff"
+    });
+
+  const link =
+    document.createElement("a");
+
+  link.download =
+    "급여명세서.png";
+
+  link.href =
+    canvas.toDataURL("image/png");
+
+  link.click();
 }

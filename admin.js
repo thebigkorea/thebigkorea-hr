@@ -1004,3 +1004,75 @@ async function savePayrollImage(id) {
 
   link.click();
 }
+async function downloadPayrollExcel() {
+  const month = document.getElementById("payrollMonth").value;
+
+  try {
+    const result = await apiRequest({
+      action: "getMonthlyPayrollSummary",
+      month: month
+    });
+
+    if (!result.success || !result.rows || result.rows.length === 0) {
+      alert("급여 데이터가 없습니다.");
+      return;
+    }
+
+    const header = [
+      "지급월", "직원명", "점포", "고용형태",
+      "기본급", "연장수당", "직무수당", "직책수당", "추가근무수당", "미휴무수당", "식대", "차량유지비", "지급합계",
+      "국민연금", "건강보험", "장기요양", "고용보험", "소득세", "지방소득세", "보험료정산", "기타공제", "공제합계",
+      "차인지급액"
+    ];
+
+    const rows = result.rows.map(row => [
+      month,
+      row.name || "",
+      row.store || "",
+      row.employmentType || "",
+      row.basicPay || 0,
+      row.overtimePay || 0,
+      row.dutyPay || 0,
+      row.positionPay || 0,
+      row.extraPay || 0,
+      row.holidayPay || 0,
+      row.mealPay || 0,
+      row.carPay || 0,
+      row.totalPay || 0,
+      row.nationalPension || 0,
+      row.healthInsurance || 0,
+      row.longTermCare || 0,
+      row.employmentInsurance || 0,
+      row.incomeTax || 0,
+      row.localIncomeTax || 0,
+      row.insuranceAdjust || 0,
+      row.etcDeduction || 0,
+      row.totalDeduction || 0,
+      row.realPay || 0
+    ]);
+
+    const csvRows = [header, ...rows];
+
+    let csv = "";
+    csvRows.forEach(row => {
+      csv += row.join(",") + "\n";
+    });
+
+    const blob = new Blob(["\uFEFF" + csv], {
+      type: "text/csv;charset=utf-8;"
+    });
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+
+    a.href = url;
+    a.download = `${month}_더큰코리아_급여대장.csv`;
+    a.click();
+
+    URL.revokeObjectURL(url);
+
+  } catch (err) {
+    console.error(err);
+    alert("급여대장 다운로드 중 오류가 발생했습니다.");
+  }
+}

@@ -314,10 +314,8 @@ async function loadPayrollSummary() {
       !result.rows ||
       result.rows.length === 0
     ) {
-
       box.innerHTML =
         `<div class="empty">급여 데이터 없음</div>`;
-
       return;
     }
 
@@ -329,40 +327,26 @@ async function loadPayrollSummary() {
         <div class="attendance-item">
 
           <div class="attendance-top">
-
-            <div class="emp-name">
-              ${row.name}
-            </div>
-
-            <div class="emp-type type-in">
-              ${row.employmentType || "-"}
-            </div>
-
+            <div class="emp-name">${row.name || ""}</div>
+            <div class="emp-type type-in">${row.employmentType || "-"}</div>
           </div>
 
           <div class="emp-store">
-            ${row.store}
+            ${row.store || ""}
           </div>
 
           <div class="emp-time">
+            계산방식 : ${row.calcType || "-"}<br><br>
 
-            총 근무 :
-            <b>${row.totalText}</b><br>
+            지급합계 : <b>${row.totalPayText || "0원"}</b><br>
+            공제합계 : <b>${row.totalDeductionText || "0원"}</b><br>
+            실수령액 : <b style="font-size:18px;">${row.realPayText || "0원"}</b><br><br>
 
-            계산방식 :
-            ${row.calcType}<br>
-
-            시급 :
-            ${formatWon(row.hourlyWage)}<br>
-
-            월급 :
-            ${formatWon(row.monthlySalary)}<br><br>
-
-            예상 급여 :
-            <b style="font-size:18px;">
-              ${row.basePayText}
-            </b>
-
+            건강보험 : ${formatWon(row.healthInsurance)}<br>
+            장기요양 : ${formatWon(row.longTermCare)}<br>
+            고용보험 : ${formatWon(row.employmentInsurance)}<br>
+            소득세 : ${formatWon(row.incomeTax)}<br>
+            지방소득세 : ${formatWon(row.localIncomeTax)}
           </div>
 
         </div>
@@ -370,9 +354,7 @@ async function loadPayrollSummary() {
     });
 
   } catch (err) {
-
     console.error(err);
-
     box.innerHTML =
       `<div class="empty">급여 계산 오류</div>`;
   }

@@ -375,7 +375,7 @@ async function loadPayrollSummary() {
             <div class="pay-row"><span>연장수당</span><b>${formatWon(row.overtimePay)}</b></div>
             <div class="pay-row"><span>직무수당</span><b>${formatWon(row.dutyPay)}</b></div>
             <div class="pay-row"><span>직책수당</span><b>${formatWon(row.positionPay)}</b></div>
-            <div class="pay-row"><span>추가근무수당</span><b>${formatWon(row.extraPay)}</b></div>
+            <div class="pay-row"><span>야간/공휴일수당</span><b>${formatWon(row.extraPay)}</b></div>
             <div class="pay-row"><span>미휴무수당</span><b>${formatWon(row.holidayPay)}</b></div>
             <div class="pay-row"><span>식대</span><b>${formatWon(row.mealPay)}</b></div>
             <div class="pay-row"><span>차량유지비</span><b>${formatWon(row.carPay)}</b></div>
@@ -953,7 +953,7 @@ async function downloadPayrollExcel() {
 
     const header = [
       "지급월", "직원명", "점포", "고용형태",
-      "기본급", "연장수당", "직무수당", "직책수당", "추가근무수당", "미휴무수당", "식대", "차량유지비", "지급합계",
+      "기본급", "연장수당", "직무수당", "직책수당", "야간/공휴일수당", "미휴무수당", "식대", "차량유지비", "지급합계",
       "국민연금", "건강보험", "장기요양", "고용보험", "소득세", "지방소득세", "보험료정산", "기타공제", "공제합계",
       "차인지급액"
     ];

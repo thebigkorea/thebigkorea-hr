@@ -88,6 +88,19 @@
     </div>
 
     <div class="card">
+      <div class="section-title">월 급여 계산</div>
+
+      <label class="form-label">급여 계산 월</label>
+      <input type="month" id="payrollMonth">
+
+      <button class="search-btn" onclick="loadPayrollSummary()">월 급여 계산</button>
+
+      <div id="payrollResult">
+        <div class="empty">월 급여를 계산해주세요.</div>
+      </div>
+    </div>
+
+    <div class="card">
       <div class="section-title">날짜 / 점포별 조회</div>
 
       <button class="excel-btn" onclick="downloadMonthlyExcel()">월별 엑셀 다운로드</button>
@@ -126,6 +139,6 @@
   </div>
 </div>
 
-<script src="admin.js?v=20260512-3"></script>
+<script src="admin.js?v=20260512-4"></script>
 </body>
 </html>

@@ -382,3 +382,48 @@ button:disabled{
   background:#fff7e6;
   border:1px solid #ffd88a;
 }
+.pay-section {
+  margin-top: 18px;
+  padding: 14px;
+  border: 1px solid #ddd;
+  border-radius: 14px;
+  background: #fafafa;
+}
+
+.pay-title {
+  font-weight: 800;
+  margin-bottom: 10px;
+  color: #12376b;
+}
+
+.pay-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px dashed #ddd;
+  font-size: 15px;
+}
+
+.pay-row:last-child {
+  border-bottom: none;
+}
+
+.pay-row.total {
+  margin-top: 8px;
+  padding-top: 10px;
+  border-top: 2px solid #222;
+  border-bottom: none;
+  font-weight: 900;
+}
+
+.pay-net {
+  margin-top: 18px;
+  padding: 16px;
+  border-radius: 14px;
+  background: #173f7a;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  font-size: 19px;
+  font-weight: 900;
+}

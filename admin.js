@@ -292,61 +292,70 @@ async function loadMonthlySummary() {
 }
 
 async function loadPayrollSummary() {
+  const month = document.getElementById("payrollMonth").value;
+  const box = document.getElementById("payrollResult");
 
-  const month =
-    document.getElementById("payrollMonth").value;
-
-  const box =
-    document.getElementById("payrollResult");
-
-  box.innerHTML =
-    `<div class="empty">급여 계산 중...</div>`;
+  box.innerHTML = `<div class="empty">급여 계산 중...</div>`;
 
   try {
-
     const result = await apiRequest({
       action: "getMonthlyPayrollSummary",
       month: month
     });
 
-    if (
-      !result.success ||
-      !result.rows ||
-      result.rows.length === 0
-    ) {
-      box.innerHTML =
-        `<div class="empty">급여 데이터 없음</div>`;
+    if (!result.success || !result.rows || result.rows.length === 0) {
+      box.innerHTML = `<div class="empty">급여 데이터 없음</div>`;
       return;
     }
 
     box.innerHTML = "";
 
     result.rows.forEach(function (row) {
-
       box.innerHTML += `
-        <div class="attendance-item">
+        <div class="attendance-item payroll-slip">
 
           <div class="attendance-top">
             <div class="emp-name">${row.name || ""}</div>
             <div class="emp-type type-in">${row.employmentType || "-"}</div>
           </div>
 
-          <div class="emp-store">
-            ${row.store || ""}
-          </div>
+          <div class="emp-store">${row.store || ""}</div>
 
           <div class="emp-time">
-            계산방식 : ${row.calcType || "-"}<br><br>
+            <b>급여명세서</b><br>
+            지급월 : ${month}<br>
+            계산방식 : ${row.calcType || "-"}
+          </div>
 
-            지급합계 : <b>${row.totalPayText || "0원"}</b><br>
-            공제합계 : <b>${row.totalDeductionText || "0원"}</b><br>
-            실수령액 : <b style="font-size:18px;">${row.realPayText || "0원"}</b><br><br>
+          <div class="pay-section">
+            <div class="pay-title">지급내역</div>
+            <div class="pay-row"><span>기본급</span><b>${formatWon(row.basicPay)}</b></div>
+            <div class="pay-row"><span>연장수당</span><b>${formatWon(row.overtimePay)}</b></div>
+            <div class="pay-row"><span>직무수당</span><b>${formatWon(row.dutyPay)}</b></div>
+            <div class="pay-row"><span>직책수당</span><b>${formatWon(row.positionPay)}</b></div>
+            <div class="pay-row"><span>추가근무수당</span><b>${formatWon(row.extraPay)}</b></div>
+            <div class="pay-row"><span>미휴무수당</span><b>${formatWon(row.holidayPay)}</b></div>
+            <div class="pay-row"><span>식대</span><b>${formatWon(row.mealPay)}</b></div>
+            <div class="pay-row"><span>차량유지비</span><b>${formatWon(row.carPay)}</b></div>
+            <div class="pay-row total"><span>지급합계</span><b>${row.totalPayText || "0원"}</b></div>
+          </div>
 
-            건강보험 : ${formatWon(row.healthInsurance)}<br>
-            장기요양 : ${formatWon(row.longTermCare)}<br>
-            고용보험 : ${formatWon(row.employmentInsurance)}<br>
-            소득세 : ${formatWon(row.incomeTax)}<br>
-            지방소득세 : ${formatWon(row.localIncomeTax)}
+          <div class="pay-section">
+            <div class="pay-title">공제내역</div>
+            <div class="pay-row"><span>국민연금</span><b>${formatWon(row.nationalPension)}</b></div>
+            <div class="pay-row"><span>건강보험</span><b>${formatWon(row.healthInsurance)}</b></div>
+            <div class="pay-row"><span>장기요양</span><b>${formatWon(row.longTermCare)}</b></div>
+            <div class="pay-row"><span>고용보험</span><b>${formatWon(row.employmentInsurance)}</b></div>
+            <div class="pay-row"><span>소득세</span><b>${formatWon(row.incomeTax)}</b></div>
+            <div class="pay-row"><span>지방소득세</span><b>${formatWon(row.localIncomeTax)}</b></div>
+            <div class="pay-row"><span>보험료정산</span><b>${formatWon(row.insuranceAdjust)}</b></div>
+            <div class="pay-row"><span>기타공제</span><b>${formatWon(row.etcDeduction)}</b></div>
+            <div class="pay-row total"><span>공제합계</span><b>${row.totalDeductionText || "0원"}</b></div>
+          </div>
+
+          <div class="pay-net">
+            <span>차인지급액</span>
+            <b>${row.realPayText || "0원"}</b>
           </div>
 
         </div>
@@ -355,11 +364,9 @@ async function loadPayrollSummary() {
 
   } catch (err) {
     console.error(err);
-    box.innerHTML =
-      `<div class="empty">급여 계산 오류</div>`;
+    box.innerHTML = `<div class="empty">급여 계산 오류</div>`;
   }
 }
-
 async function searchAttendanceByDate() {
 
   const date =

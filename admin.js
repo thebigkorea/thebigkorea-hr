@@ -347,15 +347,13 @@ async function loadPayrollSummary() {
     box.innerHTML = "";
 
     rows.forEach(function (row, index) {
-      const slipText = makePayrollSlipText(row, month);
-      const slipId = "payrollSlipText_" + index;
+      
 
       box.innerHTML += `
         <div class="attendance-item payroll-slip"
         id="payrollCard_${index}">
 
-          <textarea id="${slipId}" class="copy-textarea">${slipText}</textarea>
-
+         
           <div class="attendance-top">
             <div class="emp-name">${row.name || ""}</div>
             <div class="emp-type type-in">${row.employmentType || "-"}</div>
@@ -936,37 +934,6 @@ async function apiRequest(data) {
   );
 
   return response.json();
-}
-function makePayrollSlipText(row, month) {
-  return `[더큰코리아 급여명세서]
-
-성명: ${row.name || ""}
-소속: ${row.store || ""}
-지급월: ${month}
-
-[지급내역]
-기본급: ${formatWon(row.basicPay)}
-연장수당: ${formatWon(row.overtimePay)}
-직무수당: ${formatWon(row.dutyPay)}
-직책수당: ${formatWon(row.positionPay)}
-추가근무수당: ${formatWon(row.extraPay)}
-미휴무수당: ${formatWon(row.holidayPay)}
-식대: ${formatWon(row.mealPay)}
-차량유지비: ${formatWon(row.carPay)}
-지급합계: ${row.totalPayText || "0원"}
-
-[공제내역]
-국민연금: ${formatWon(row.nationalPension)}
-건강보험: ${formatWon(row.healthInsurance)}
-장기요양: ${formatWon(row.longTermCare)}
-고용보험: ${formatWon(row.employmentInsurance)}
-소득세: ${formatWon(row.incomeTax)}
-지방소득세: ${formatWon(row.localIncomeTax)}
-보험료정산: ${formatWon(row.insuranceAdjust)}
-기타공제: ${formatWon(row.etcDeduction)}
-공제합계: ${row.totalDeductionText || "0원"}
-
-차인지급액: ${row.realPayText || "0원"}`;
 }
 
 

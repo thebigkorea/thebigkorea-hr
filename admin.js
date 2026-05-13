@@ -149,6 +149,14 @@ async function loadStores() {
     select.innerHTML =
       `<option value="">전체 점포</option>`;
 
+    const payrollSelect =
+      document.getElementById("payrollStoreSelect");
+
+    if (payrollSelect) {
+      payrollSelect.innerHTML =
+      `<option value="">전체 점포</option>`;
+}  
+
     result.stores.forEach(function (store) {
 
       const opt =
@@ -161,6 +169,13 @@ async function loadStores() {
         + (store.storeName || "");
 
       select.appendChild(opt);
+      if (payrollSelect) {
+       const opt2 = document.createElement("option");
+       opt2.value = store.storeCode;
+       opt2.innerText =
+         "[" + (store.region || "") + "] " + (store.storeName || "");
+       payrollSelect.appendChild(opt2);
+      }
     });
 
   } catch (err) {
@@ -293,6 +308,8 @@ async function loadMonthlySummary() {
 
 async function loadPayrollSummary() {
   const month = document.getElementById("payrollMonth").value;
+  const keyword = document.getElementById("payrollKeyword").value.trim();
+  const storeCode = document.getElementById("payrollStoreSelect").value;
   const box = document.getElementById("payrollResult");
 
   box.innerHTML = `<div class="empty">급여 계산 중...</div>`;
@@ -308,11 +325,35 @@ async function loadPayrollSummary() {
       return;
     }
 
+    let rows = result.rows;
+
+    if (keyword) {
+      rows = rows.filter(row =>
+        String(row.name || "").includes(keyword)
+      );
+    }
+
+    if (storeCode) {
+      rows = rows.filter(row =>
+        String(row.storeCode || "") === String(storeCode)
+      );
+    }
+
+    if (rows.length === 0) {
+      box.innerHTML = `<div class="empty">검색 결과 없음</div>`;
+      return;
+    }
+
     box.innerHTML = "";
 
-    result.rows.forEach(function (row) {
+    rows.forEach(function (row, index) {
+      const slipText = makePayrollSlipText(row, month);
+      const slipId = "payrollSlipText_" + index;
+
       box.innerHTML += `
         <div class="attendance-item payroll-slip">
+
+          <textarea id="${slipId}" class="copy-textarea">${slipText}</textarea>
 
           <div class="attendance-top">
             <div class="emp-name">${row.name || ""}</div>
@@ -326,6 +367,10 @@ async function loadPayrollSummary() {
             지급월 : ${month}<br>
             계산방식 : ${row.calcType || "-"}
           </div>
+
+          <button class="copy-btn" onclick="copyPayrollSlip('${slipId}')">
+            급여명세서 복사
+          </button>
 
           <div class="pay-section">
             <div class="pay-title">지급내역</div>
@@ -892,4 +937,44 @@ async function apiRequest(data) {
   );
 
   return response.json();
+}
+function makePayrollSlipText(row, month) {
+  return `[더큰코리아 급여명세서]
+
+성명: ${row.name || ""}
+소속: ${row.store || ""}
+지급월: ${month}
+
+[지급내역]
+기본급: ${formatWon(row.basicPay)}
+연장수당: ${formatWon(row.overtimePay)}
+직무수당: ${formatWon(row.dutyPay)}
+직책수당: ${formatWon(row.positionPay)}
+추가근무수당: ${formatWon(row.extraPay)}
+미휴무수당: ${formatWon(row.holidayPay)}
+식대: ${formatWon(row.mealPay)}
+차량유지비: ${formatWon(row.carPay)}
+지급합계: ${row.totalPayText || "0원"}
+
+[공제내역]
+국민연금: ${formatWon(row.nationalPension)}
+건강보험: ${formatWon(row.healthInsurance)}
+장기요양: ${formatWon(row.longTermCare)}
+고용보험: ${formatWon(row.employmentInsurance)}
+소득세: ${formatWon(row.incomeTax)}
+지방소득세: ${formatWon(row.localIncomeTax)}
+보험료정산: ${formatWon(row.insuranceAdjust)}
+기타공제: ${formatWon(row.etcDeduction)}
+공제합계: ${row.totalDeductionText || "0원"}
+
+차인지급액: ${row.realPayText || "0원"}`;
+}
+
+function copyPayrollSlip(id) {
+  const el = document.getElementById(id);
+  el.classList.remove("copy-textarea");
+  el.select();
+  document.execCommand("copy");
+  el.classList.add("copy-textarea");
+  alert("급여명세서가 복사되었습니다.");
 }

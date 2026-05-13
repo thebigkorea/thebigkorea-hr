@@ -93,6 +93,14 @@
       <label class="form-label">급여 계산 월</label>
       <input type="month" id="payrollMonth">
 
+      <label class="form-label">직원명 검색</label>
+      <input type="text" id="payrollKeyword" placeholder="예: 박상신">
+
+      <label class="form-label">점포 선택</label>
+      <select id="payrollStoreSelect">
+        <option value="">전체 점포</option>
+      </select>
+
       <button class="search-btn" onclick="loadPayrollSummary()">월 급여 계산</button>
 
       <div id="payrollResult">

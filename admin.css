@@ -462,3 +462,45 @@ button:disabled{
   font-weight: 900;
   box-shadow: 0 6px 0 rgba(0,0,0,0.18);
 }
+.payroll-slip {
+  padding: 14px !important;
+  font-size: 13px;
+}
+
+.slip-title {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 900;
+  margin-bottom: 10px;
+}
+
+.pay-section {
+  margin-top: 8px;
+  padding: 10px;
+}
+
+.pay-title {
+  font-size: 15px;
+  margin-bottom: 6px;
+}
+
+.pay-row {
+  padding: 3px 0;
+  font-size: 13px;
+}
+
+.pay-row.total {
+  margin-top: 4px;
+  padding-top: 6px;
+}
+
+.pay-net {
+  margin-top: 10px;
+  padding: 12px;
+  font-size: 18px;
+}
+
+.attendance-top,
+.emp-store {
+  display: none;
+}

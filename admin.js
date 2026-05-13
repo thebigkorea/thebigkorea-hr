@@ -361,26 +361,14 @@ async function loadPayrollSummary() {
             <div class="emp-type type-in">${row.employmentType || "-"}</div>
           </div>
 
-          <div class="emp-store">${row.store || ""}</div>
-
-          <div class="emp-time">
-            <b>급여명세서</b><br>
-            지급월 : ${month}<br>
-            계산방식 : ${row.calcType || "-"}
+          <div class="emp-time slip-title">
+             <b>${row.name || ""} 급여명세서</b><br>
+             지급월 : ${month}
           </div>
 
           <div class="payroll-btn-row">
 
-          <button class="copy-btn"
-            onclick="copyPayrollSlip('${slipId}')">
-            급여명세서 복사
-         </button>
-
-         <button class="save-btn"
-             onclick="savePayrollImage('payrollCard_${index}')">
-             이미지 저장
-           </button>
-
+          
          </div>
 
           <div class="pay-section">

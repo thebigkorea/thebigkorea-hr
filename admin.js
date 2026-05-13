@@ -969,41 +969,7 @@ function makePayrollSlipText(row, month) {
 차인지급액: ${row.realPayText || "0원"}`;
 }
 
-function copyPayrollSlip(id) {
-  const el = document.getElementById(id);
-  el.classList.remove("copy-textarea");
-  el.select();
-  document.execCommand("copy");
-  el.classList.add("copy-textarea");
-  alert("급여명세서가 복사되었습니다.");
-}
-async function savePayrollImage(id) {
 
-  const target =
-    document.getElementById(id);
-
-  if (!target) {
-    alert("급여명세서를 찾을 수 없습니다.");
-    return;
-  }
-
-  const canvas =
-    await html2canvas(target, {
-      scale: 2,
-      backgroundColor: "#ffffff"
-    });
-
-  const link =
-    document.createElement("a");
-
-  link.download =
-    "급여명세서.png";
-
-  link.href =
-    canvas.toDataURL("image/png");
-
-  link.click();
-}
 async function downloadPayrollExcel() {
   const month = document.getElementById("payrollMonth").value;
 

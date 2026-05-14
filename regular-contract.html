@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>정규직 근로계약서</title>
+
+<style>
+body{margin:0;background:#f4f6f9;font-family:Pretendard,sans-serif;color:#222;}
+.wrap{max-width:760px;margin:0 auto;padding:18px;}
+.card,.paper{background:#fff;border-radius:22px;padding:22px;margin-bottom:18px;box-shadow:0 6px 18px rgba(0,0,0,.08);}
+.title{font-size:30px;font-weight:900;color:#173b72;margin-bottom:16px;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+label{font-weight:800;font-size:14px;}
+input,select{width:100%;box-sizing:border-box;padding:13px;border:1px solid #ddd;border-radius:12px;font-size:16px;margin-top:6px;margin-bottom:10px;}
+button{width:100%;border:0;border-radius:16px;padding:17px;background:#174a9c;color:#fff;font-size:19px;font-weight:900;margin-top:10px;}
+.green{background:#0f7b46;}
+.paper h1{text-align:center;font-size:28px;}
+.paper h3{margin-top:22px;border-bottom:2px solid #eee;padding-bottom:6px;}
+.paper p{line-height:1.7;}
+table{width:100%;border-collapse:collapse;margin:10px 0;}
+th,td{border:1px solid #ccc;padding:9px;text-align:center;}
+.sign-area{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px;}
+.sign-box{border:1px solid #ddd;border-radius:14px;padding:14px;min-height:170px;}
+canvas{width:100%;height:170px;border:1px solid #ccc;border-radius:12px;background:#fff;}
+.hidden{display:none;}
+@media(max-width:640px){.grid,.sign-area{grid-template-columns:1fr}.paper{font-size:14px}}
+</style>
+</head>
+
+<body>
+<div class="wrap">
+
+<div class="card">
+  <div class="title">정규직 근로계약서 생성</div>
+
+  <div class="grid">
+    <div>
+      <label>점포</label>
+      <select id="storeName">
+        <option>한국의집 롯데월드몰점</option>
+        <option>길채정 압구정점</option>
+        <option>소바공방 평촌점</option>
+        <option>더큰코리아 본사</option>
+      </select>
+    </div>
+
+    <div>
+      <label>직원명</label>
+      <input id="empName">
+    </div>
+
+    <div>
+      <label>연락처</label>
+      <input id="phone">
+
+      <button onclick="loadEmployeeInfo()">
+      직원정보 불러오기
+      </button>
+    </div>
+
+    <div>
+      <label>생년월일</label>
+      <input id="birth" placeholder="예: 1990-06-20">
+    </div>
+
+    <div>
+      <label>주소</label>
+      <input id="address">
+    </div>
+
+    <div>
+      <label>입사일</label>
+      <input id="startDate" type="date">
+    </div>
+
+    <div>
+      <label>업무내용</label>
+      <input id="jobDuty" value="매장 운영 및 관리업무">
+    </div>
+
+    <div>
+      <label>근무시간</label>
+      <input id="workTime" value="10:00 - 21:00">
+    </div>
+
+    <div>
+      <label>휴게시간</label>
+      <input id="breakTime" value="14:00 - 15:00">
+    </div>
+
+    <div>
+      <label>기본급</label>
+      <input id="basicPay" value="2156880">
+    </div>
+
+    <div>
+      <label>연장수당</label>
+      <input id="overtimePay" value="665640">
+    </div>
+
+    <div>
+      <label>직무수당</label>
+      <input id="dutyPay" value="27480">
+    </div>
+
+    <div>
+      <label>직책수당</label>
+      <input id="positionPay" value="0">
+    </div>
+
+    <div>
+      <label>식대</label>
+      <input id="mealPay" value="0">
+    </div>
+
+    <div>
+      <label>월급총액</label>
+      <input id="totalPay" value="2850000">
+    </div>
+  </div>
+
+  <button onclick="createContract()">계약서 생성</button>
+</div>
+
+<div class="paper" id="contractPaper">
+  <h1>근로계약서</h1>
+
+  <p>
+    <b id="cStoreName">한국의집 롯데월드몰점</b>(이하 “회사”라 한다)과
+    근로자 <b id="cEmpName"></b>(이하 “직원”이라 한다)은 다음과 같이 근로계약을 체결하고 이를 성실히 이행할 것을 약정한다.
+  </p>
+
+  <h3>제1조 계약기간</h3>
+  <p>입사일 : <span id="cStartDate"></span></p>
+  <p>입사일로부터 기간의 정함이 없는 근로계약을 체결한다. 수습기간은 3개월로 한다.</p>
+  <p>수습기간 중 임금은 월급여의 100%로 한다.</p>
+
+  <h3>제2조 근무장소 및 업무내용</h3>
+  <p>① 근무장소 : <span id="cWorkPlace"></span></p>
+  <p>② 업무내용 : <span id="cJobDuty"></span></p>
+  <p>③ 회사는 필요한 경우 직원의 의견을 들어 업무내용을 변경할 수 있다.</p>
+
+  <h3>제3조 근로시간 및 휴게</h3>
+  <p>① 근무시간 및 휴게시간은 아래와 같다. 주 5일 근무를 원칙으로 한다.</p>
+  <table>
+    <tr><th>근무시간</th><th>휴게시간</th></tr>
+    <tr><td id="cWorkTime"></td><td id="cBreakTime"></td></tr>
+  </table>
+
+  <h3>제4조 휴일 및 휴가</h3>
+  <p>① 법정유급휴일은 주휴일 및 근로자의 날로 한다.</p>
+  <p>② 근로기준법이 정하는 바에 따라 연차휴가를 부여한다.</p>
+
+  <h3>제5조 임금</h3>
+  <p>① 임금은 기본급, 연장수당, 직무수당, 직책수당, 식대 등으로 구성된다.</p>
+
+  <table>
+    <tr><th>구분</th><th>금액</th><th>산정 기준</th></tr>
+    <tr><td>기본급</td><td id="cBasicPay"></td><td>월 소정근로시간 기준</td></tr>
+    <tr><td>연장수당</td><td id="cOvertimePay"></td><td>연장근로수당</td></tr>
+    <tr><td>직무수당</td><td id="cDutyPay"></td><td>직무수행 수당</td></tr>
+    <tr><td>직책수당</td><td id="cPositionPay"></td><td>직책수행 수당</td></tr>
+    <tr><td>식대</td><td id="cMealPay"></td><td>복리후생</td></tr>
+    <tr><th>월급총액</th><th id="cTotalPay"></th><th>상기 금액의 합계</th></tr>
+  </table>
+
+  <p>② 회사는 매월 1일부터 말일까지 산정한 급여를 익월 10일 직원 명의의 은행계좌로 지급한다.</p>
+  <p>③ 급여 지급 시 갑근세, 사회보험료 등 법정 공제액은 공제 후 지급한다.</p>
+
+  <h3>제6조 제출서류</h3>
+  <p>직원은 주민등록등본, 보건증, 통장사본, 신분증 사본 등 회사가 요청하는 서류를 제출한다.</p>
+
+  <h3>제7조 퇴직급여</h3>
+  <p>회사는 근로자퇴직급여보장법이 정한 바에 따라 퇴직급여를 지급한다.</p>
+
+  <h3>제8조 퇴직절차</h3>
+  <p>직원은 퇴직하고자 할 경우 사직원을 사전 제출하여야 한다.</p>
+
+  <h3>제9조 근로계약 해지사유</h3>
+  <p>무단결근, 반복적인 지각·조퇴, 정당한 업무지시 불응, 업무수행 곤란 등 회사의 취업규칙 및 관계 법령상 사유가 있는 경우 계약을 해지할 수 있다.</p>
+
+  <h3>제10조 신의성실 및 비밀유지</h3>
+  <p>직원은 회사의 경영방침에 따라 성실히 근무하며, 회사의 영업기밀 및 고객정보를 외부에 누설하여서는 아니 된다.</p>
+
+  <h3>제11조 CCTV 설치 동의</h3>
+  <p>직원은 방범, 화재예방, 시설안전관리 목적으로 CCTV가 설치·운영될 수 있음을 설명받고 이에 동의한다.</p>
+
+  <h3>제12조 기타사항</h3>
+  <p>본 계약서에 명시되지 않은 사항은 근로기준법, 관계법령, 취업규칙 및 판례에 따른다.</p>
+
+  <p style="text-align:center;margin-top:28px;">
+    본인은 위 근로계약의 내용을 확인하고 전자계약 방식에 동의합니다.
+  </p>
+
+  <p style="text-align:center;font-weight:900;" id="cToday"></p>
+
+  <div class="sign-area">
+    <div class="sign-box">
+      <h4>[회사]</h4>
+      <p>상호 : <span id="cCompanyStore"></span></p>
+      <p>대표자 : 박병호</p>
+      <p>주소 : <span id="cCompanyAddress">서울시 송파구 올림픽로 300, 5층</span></p>
+    </div>
+
+    <div class="sign-box">
+      <h4>[직원]</h4>
+      <p>성명 : <span id="cWorkerName"></span></p>
+      <p>생년월일 : <span id="cBirth"></span></p>
+      <p>주소 : <span id="cAddress"></span></p>
+      <p>연락처 : <span id="cPhone"></span></p>
+      <p>전자서명</p>
+      <canvas id="signaturePad" width="500" height="180"></canvas>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <label>
+    <input type="checkbox" id="agreeCheck">
+    본인은 위 근로계약 내용을 확인하였으며 전자계약에 동의합니다.
+  </label>
+
+  <button onclick="clearSignature()">다시 서명</button>
+  <button class="green" onclick="completeContract()">전자계약 완료</button>
+
+  <div id="message"></div>
+</div>
+
+</div>
+
+<script>
+function won(v){
+  return Number(String(v || "0").replace(/[^0-9]/g,"")).toLocaleString("ko-KR") + "원";
+}
+
+function todayText(){
+  const d = new Date();
+  return d.getFullYear() + "년 " + (d.getMonth()+1) + "월 " + d.getDate() + "일";
+}
+
+const API_URL =
+"https://script.google.com/macros/s/앱스크립트주소/exec";
+
+async function apiRequest(data){
+
+  const response =
+    await fetch(API_URL,{
+      method:"POST",
+      body:JSON.stringify(data)
+    });
+
+  return await response.json();
+}
+
+async function loadEmployeeInfo(){
+
+  const result =
+    await apiRequest({
+
+      action:"getEmployeeBasicInfo",
+
+      name:
+        document.getElementById("empName").value,
+
+      phone:
+        document.getElementById("phone").value
+    });
+
+  if(!result.success){
+
+    alert(result.message || "직원정보 없음");
+    return;
+  }
+
+  const d = result.data;
+
+  document.getElementById("storeName").value =
+    d.store || "";
+
+  document.getElementById("birth").value =
+    d.birth || "";
+
+  document.getElementById("address").value =
+    d.address || "";
+
+  document.getElementById("basicPay").value =
+    d.basicPay || 0;
+
+  document.getElementById("overtimePay").value =
+    d.overtimePay || 0;
+
+  document.getElementById("dutyPay").value =
+    d.dutyPay || 0;
+
+  document.getElementById("positionPay").value =
+    d.positionPay || 0;
+
+  document.getElementById("mealPay").value =
+    d.mealPay || 0;
+
+  document.getElementById("totalPay").value =
+    d.totalPay || 0;
+
+  alert("직원정보 불러오기 완료");
+}
+
+function createContract(){
+  const store = document.getElementById("storeName").value;
+  const name = document.getElementById("empName").value;
+
+  document.getElementById("cStoreName").innerText = store;
+  document.getElementById("cEmpName").innerText = name;
+  document.getElementById("cStartDate").innerText = document.getElementById("startDate").value;
+  document.getElementById("cWorkPlace").innerText = store;
+  document.getElementById("cJobDuty").innerText = document.getElementById("jobDuty").value;
+  document.getElementById("cWorkTime").innerText = document.getElementById("workTime").value;
+  document.getElementById("cBreakTime").innerText = document.getElementById("breakTime").value;
+
+  document.getElementById("cBasicPay").innerText = won(document.getElementById("basicPay").value);
+  document.getElementById("cOvertimePay").innerText = won(document.getElementById("overtimePay").value);
+  document.getElementById("cDutyPay").innerText = won(document.getElementById("dutyPay").value);
+  document.getElementById("cPositionPay").innerText = won(document.getElementById("positionPay").value);
+  document.getElementById("cMealPay").innerText = won(document.getElementById("mealPay").value);
+  document.getElementById("cTotalPay").innerText = won(document.getElementById("totalPay").value);
+
+  document.getElementById("cToday").innerText = todayText();
+  document.getElementById("cCompanyStore").innerText = store;
+  document.getElementById("cWorkerName").innerText = name;
+  document.getElementById("cBirth").innerText = document.getElementById("birth").value;
+  document.getElementById("cAddress").innerText = document.getElementById("address").value;
+  document.getElementById("cPhone").innerText = document.getElementById("phone").value;
+
+  window.scrollTo({top:document.getElementById("contractPaper").offsetTop,behavior:"smooth"});
+}
+
+const canvas = document.getElementById("signaturePad");
+const ctx = canvas.getContext("2d");
+let drawing = false;
+
+canvas.addEventListener("mousedown", e => {drawing=true; ctx.beginPath();});
+canvas.addEventListener("mouseup", e => drawing=false);
+canvas.addEventListener("mousemove", draw);
+
+canvas.addEventListener("touchstart", e => {drawing=true; ctx.beginPath(); e.preventDefault();});
+canvas.addEventListener("touchend", e => drawing=false);
+canvas.addEventListener("touchmove", e => {draw(e.touches[0]); e.preventDefault();});
+
+function draw(e){
+  if(!drawing) return;
+  const rect = canvas.getBoundingClientRect();
+  ctx.lineWidth = 3;
+  ctx.lineCap = "round";
+  ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+}
+
+function clearSignature(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+}
+
+function completeContract(){
+  if(!document.getElementById("agreeCheck").checked){
+    alert("전자계약 동의가 필요합니다.");
+    return;
+  }
+
+  alert("전자계약이 완료되었습니다. 다음 단계에서 저장 기능을 연결합니다.");
+}
+</script>
+
+</body>
+</html>

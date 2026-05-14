@@ -1113,3 +1113,76 @@ ${row.retirementPayText}
       `<div class="empty">퇴직금 계산 실패</div>`;
   }
 }
+async function loadStoreLaborCost(){
+
+  const box =
+    document.getElementById("storeLaborResult");
+
+  box.innerHTML =
+    `<div class="empty">점포별 인건비 계산 중...</div>`;
+
+  try{
+
+    const result =
+      await apiRequest({
+        action:"getStoreLaborCost"
+      });
+
+    if(
+      !result.success ||
+      !result.rows ||
+      result.rows.length === 0
+    ){
+      box.innerHTML =
+        `<div class="empty">데이터 없음</div>`;
+      return;
+    }
+
+    box.innerHTML = "";
+
+    result.rows.forEach(function(row){
+
+      box.innerHTML += `
+
+<div class="attendance-item">
+
+<div class="attendance-top">
+
+<div class="emp-name">
+${row.store}
+</div>
+
+</div>
+
+<div class="emp-time">
+
+직원수 :
+<b>${row.employeeCount.toLocaleString()}명</b><br><br>
+
+총 지급급여 :
+<b>${row.totalPayText}</b><br><br>
+
+총 공제액 :
+<b>${row.totalDeductionText}</b><br><br>
+
+실지급액 :
+<b style="font-size:24px;color:#174a9c;">
+${row.realPayText}
+</b>
+
+</div>
+
+</div>
+
+`;
+    });
+
+  }
+  catch(err){
+
+    console.error(err);
+
+    box.innerHTML =
+      `<div class="empty">조회 실패</div>`;
+  }
+}

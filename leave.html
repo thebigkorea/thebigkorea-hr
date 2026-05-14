@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>연차조회</title>
+
+<style>
+
+body{
+  margin:0;
+  background:#f4f6f9;
+  font-family:Pretendard,sans-serif;
+}
+
+.wrap{
+  max-width:520px;
+  margin:0 auto;
+  padding:20px;
+}
+
+.title{
+  font-size:32px;
+  font-weight:900;
+  color:#173b72;
+  margin-bottom:24px;
+}
+
+.card{
+  background:#fff;
+  border-radius:24px;
+  padding:22px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.08);
+}
+
+.input{
+  width:100%;
+  padding:18px;
+  border-radius:16px;
+  border:1px solid #ddd;
+  margin-bottom:16px;
+  font-size:18px;
+  box-sizing:border-box;
+}
+
+.btn{
+  width:100%;
+  border:none;
+  border-radius:18px;
+  padding:20px;
+  background:#174a9c;
+  color:#fff;
+  font-size:22px;
+  font-weight:900;
+}
+
+.result{
+  margin-top:24px;
+}
+
+.box{
+  background:#fff;
+  border-radius:24px;
+  padding:22px;
+  margin-top:18px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.08);
+}
+
+.label{
+  color:#666;
+  margin-bottom:8px;
+}
+
+.value{
+  font-size:30px;
+  font-weight:900;
+  color:#174a9c;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+<div class="title">
+연차조회
+</div>
+
+<div class="card">
+
+<input
+id="empName"
+class="input"
+placeholder="직원명">
+
+<input
+id="phone"
+class="input"
+placeholder="전화번호">
+
+<button
+class="btn"
+onclick="loadLeave()">
+연차조회
+</button>
+
+</div>
+
+<div
+id="result"
+class="result">
+</div>
+
+</div>
+
+<script>
+
+const API_URL =
+"https://script.google.com/macros/s/여기에앱스크립트주소/exec";
+
+async function apiRequest(data){
+
+  const response =
+    await fetch(API_URL,{
+      method:"POST",
+      body:JSON.stringify(data)
+    });
+
+  return await response.json();
+}
+
+function formatWon(v){
+  return Number(v || 0)
+    .toLocaleString("ko-KR");
+}
+
+async function loadLeave(){
+
+  const name =
+    document.getElementById("empName").value.trim();
+
+  const phone =
+    document.getElementById("phone").value.trim();
+
+  if(!name || !phone){
+    alert("직원명과 전화번호를 입력하세요.");
+    return;
+  }
+
+  const resultBox =
+    document.getElementById("result");
+
+  resultBox.innerHTML =
+    "조회중...";
+
+  try{
+
+    const result =
+      await apiRequest({
+        action:"getEmployeeLeaveInfo",
+        name:name,
+        phone:phone
+      });
+
+    if(!result.success){
+      resultBox.innerHTML =
+        "직원정보 없음";
+      return;
+    }
+
+    const row =
+      result.data;
+
+    resultBox.innerHTML = `
+
+<div class="box">
+
+<div class="label">
+직원명
+</div>
+
+<div class="value">
+${row.name}
+</div>
+
+</div>
+
+<div class="box">
+
+<div class="label">
+발생 연차
+</div>
+
+<div class="value">
+${row.totalLeave}일
+</div>
+
+</div>
+
+<div class="box">
+
+<div class="label">
+사용 연차
+</div>
+
+<div class="value">
+${row.usedLeave}일
+</div>
+
+</div>
+
+<div class="box">
+
+<div class="label">
+잔여 연차
+</div>
+
+<div class="value">
+${row.remainLeave}일
+</div>
+
+</div>
+
+`;
+
+  }
+  catch(err){
+
+    console.error(err);
+
+    resultBox.innerHTML =
+      "조회 실패";
+  }
+}
+
+</script>
+
+</body>
+</html>

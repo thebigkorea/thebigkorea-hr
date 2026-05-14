@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>급여명세서 조회</title>
+
+<style>
+
+body{
+  margin:0;
+  background:#f4f6f9;
+  font-family:'Pretendard',sans-serif;
+  color:#222;
+}
+
+.container{
+  max-width:500px;
+  margin:0 auto;
+  padding:20px;
+}
+
+.title{
+  font-size:28px;
+  font-weight:900;
+  margin-bottom:20px;
+}
+
+.card{
+  background:#fff;
+  border-radius:20px;
+  padding:20px;
+  margin-bottom:20px;
+  box-shadow:0 4px 14px rgba(0,0,0,0.08);
+}
+
+.label{
+  font-size:14px;
+  font-weight:700;
+  margin-bottom:8px;
+}
+
+.input{
+  width:100%;
+  box-sizing:border-box;
+  padding:16px;
+  border:1px solid #ddd;
+  border-radius:14px;
+  font-size:17px;
+  margin-bottom:16px;
+}
+
+.btn{
+  width:100%;
+  border:none;
+  border-radius:16px;
+  background:#174a9c;
+  color:#fff;
+  font-size:20px;
+  font-weight:900;
+  padding:18px;
+}
+
+.slip-title{
+  text-align:center;
+  font-size:28px;
+  font-weight:900;
+  margin-bottom:20px;
+}
+
+.section{
+  border:1px solid #ddd;
+  border-radius:18px;
+  padding:16px;
+  margin-bottom:16px;
+}
+
+.section-title{
+  font-size:20px;
+  font-weight:900;
+  margin-bottom:16px;
+  color:#0b2e6d;
+}
+
+.row{
+  display:flex;
+  justify-content:space-between;
+  padding:8px 0;
+  border-bottom:1px dashed #ddd;
+}
+
+.total{
+  font-weight:900;
+  font-size:20px;
+  border-top:3px solid #333;
+  margin-top:10px;
+  padding-top:12px;
+}
+
+.realpay{
+  background:#174a9c;
+  color:#fff;
+  border-radius:16px;
+  padding:18px;
+  text-align:center;
+  font-size:30px;
+  font-weight:900;
+}
+
+.empty{
+  text-align:center;
+  padding:40px;
+  color:#777;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="title">
+급여명세서 조회
+</div>
+
+<div class="card">
+
+<div class="label">직원명</div>
+<input id="name" class="input">
+
+<div class="label">전화번호</div>
+<input id="phone" class="input">
+
+<div class="label">비밀번호</div>
+<input id="password" type="password" class="input">
+
+<div class="label">지급월</div>
+<input id="month" type="month" class="input">
+
+<button class="btn" onclick="loadSlip()">
+급여명세서 조회
+</button>
+
+</div>
+
+<div id="result"></div>
+
+</div>
+
+<script>
+
+const API_URL =
+"https://script.google.com/macros/s/AKfycbyriJGrYUjjWwnnb7L8HEUHgoRXXo_ma-aOTQi8fqpVomQfxbmBE18YH9LmWEHrKENsWA/exec";
+
+function formatWon(value){
+  return Number(value || 0).toLocaleString("ko-KR") + "원";
+}
+
+async function apiRequest(data){
+
+  const response = await fetch(API_URL,{
+    method:"POST",
+    body:JSON.stringify(data)
+  });
+
+  return await response.json();
+}
+
+async function loadSlip(){
+
+  const box =
+    document.getElementById("result");
+
+  box.innerHTML =
+    `<div class="empty">조회 중...</div>`;
+
+  try{
+
+    const result =
+      await apiRequest({
+        action:"getEmployeePayrollSlip",
+        name:document.getElementById("name").value,
+        phone:document.getElementById("phone").value,
+        password:document.getElementById("password").value,
+        month:document.getElementById("month").value
+      });
+
+    if(!result.success){
+
+      box.innerHTML =
+        `<div class="empty">${result.message}</div>`;
+
+      return;
+    }
+
+    const row = result.slip;
+
+    box.innerHTML = `
+
+<div class="card">
+
+<div class="slip-title">
+${row.name} 급여명세서
+</div>
+
+<div style="text-align:center;font-size:22px;font-weight:900;margin-bottom:20px;">
+지급월 : ${document.getElementById("month").value}
+</div>
+
+<div class="section">
+
+<div class="section-title">
+지급내역
+</div>
+
+<div class="row"><span>기본급</span><b>${formatWon(row.basicPay)}</b></div>
+<div class="row"><span>연장수당</span><b>${formatWon(row.overtimePay)}</b></div>
+<div class="row"><span>직무수당</span><b>${formatWon(row.dutyPay)}</b></div>
+<div class="row"><span>직책수당</span><b>${formatWon(row.positionPay)}</b></div>
+<div class="row"><span>야간/공휴일수당</span><b>${formatWon(row.extraPay)}</b></div>
+<div class="row"><span>미휴무수당</span><b>${formatWon(row.holidayPay)}</b></div>
+<div class="row"><span>식대</span><b>${formatWon(row.mealPay)}</b></div>
+<div class="row"><span>차량유지비</span><b>${formatWon(row.carPay)}</b></div>
+
+<div class="row total">
+<span>지급합계</span>
+<b>${row.totalPayText}</b>
+</div>
+
+</div>
+
+<div class="section">
+
+<div class="section-title">
+공제내역
+</div>
+
+<div class="row"><span>국민연금</span><b>${formatWon(row.nationalPension)}</b></div>
+<div class="row"><span>건강보험</span><b>${formatWon(row.healthInsurance)}</b></div>
+<div class="row"><span>장기요양</span><b>${formatWon(row.longTermCare)}</b></div>
+<div class="row"><span>고용보험</span><b>${formatWon(row.employmentInsurance)}</b></div>
+<div class="row"><span>소득세</span><b>${formatWon(row.incomeTax)}</b></div>
+<div class="row"><span>지방소득세</span><b>${formatWon(row.localIncomeTax)}</b></div>
+
+<div class="row total">
+<span>공제합계</span>
+<b>${row.totalDeductionText}</b>
+</div>
+
+</div>
+
+<div class="realpay">
+차인지급액<br>
+${row.realPayText}
+</div>
+
+</div>
+`;
+  }
+  catch(err){
+
+    console.error(err);
+
+    box.innerHTML =
+      `<div class="empty">조회 실패</div>`;
+  }
+}
+
+</script>
+
+</body>
+</html>

@@ -1009,3 +1009,30 @@ async function downloadPayrollExcel() {
     alert("급여대장 다운로드 중 오류가 발생했습니다.");
   }
 }
+async function closePayrollMonth(){
+
+  const month =
+    document.getElementById("payrollMonth").value;
+
+  if(!confirm(month + " 급여를 마감할까요?")){
+    return;
+  }
+
+  try{
+
+    const result =
+      await apiRequest({
+        action:"closeMonthlyPayroll",
+        month:month
+      });
+
+    alert(result.message || "완료");
+
+  }
+  catch(err){
+
+    console.error(err);
+
+    alert("급여마감 실패");
+  }
+}

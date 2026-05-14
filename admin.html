@@ -103,9 +103,11 @@
 
       <button class="search-btn" onclick="loadPayrollSummary()">월 급여 계산</button>
       <button class="excel-btn"  onclick="closePayrollMonth()">  월 급여 마감</button>
+      <button  class="excel-btn" onclick="loadRetirementPay()">  퇴직금 계산</button>
       <button class="excel-btn" onclick="downloadPayrollExcel()">
          급여대장 엑셀 다운로드
       </button>
+      <div id="retirementResult"></div>
 
       <div id="payrollResult">
         <div class="empty">월 급여를 계산해주세요.</div>

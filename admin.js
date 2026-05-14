@@ -1036,3 +1036,80 @@ async function closePayrollMonth(){
     alert("급여마감 실패");
   }
 }
+async function loadRetirementPay(){
+
+  const box =
+    document.getElementById("retirementResult");
+
+  box.innerHTML =
+    `<div class="empty">퇴직금 계산 중...</div>`;
+
+  try{
+
+    const result =
+      await apiRequest({
+        action:"getRetirementPayList"
+      });
+
+    if(
+      !result.success ||
+      !result.rows ||
+      result.rows.length === 0
+    ){
+      box.innerHTML =
+        `<div class="empty">대상 직원 없음</div>`;
+      return;
+    }
+
+    box.innerHTML = "";
+
+    result.rows.forEach(function(row){
+
+      box.innerHTML += `
+
+<div class="attendance-item">
+
+<div class="attendance-top">
+
+<div class="emp-name">
+${row.name}
+</div>
+
+</div>
+
+<div class="emp-store">
+${row.store}
+</div>
+
+<div class="emp-time">
+
+입사일 :
+<b>${row.joinDate}</b><br><br>
+
+근속일수 :
+<b>${row.workDays.toLocaleString()}일</b><br><br>
+
+평균임금 :
+<b>${row.averagePayText}</b><br><br>
+
+예상 퇴직금 :
+<b style="font-size:24px;color:#174a9c;">
+${row.retirementPayText}
+</b>
+
+</div>
+
+</div>
+
+`;
+    });
+
+  }
+  catch(err){
+
+    console.error(err);
+
+    box.innerHTML =
+      `<div class="empty">퇴직금 계산 실패</div>`;
+  }
+}

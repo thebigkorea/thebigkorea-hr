@@ -78,42 +78,85 @@ canvas{width:100%;height:170px;border:1px solid #ccc;border-radius:12px;backgrou
 
     <div>
       <label>근무시간</label>
-      <input id="workTime" value="10:00 - 21:00">
+      <select id="workTime">
+        <option>10:00 - 21:00</option>
+        <option>09:00 - 18:00</option>
+        <option>10:00 - 19:00</option>
+        <option>11:00 - 20:00</option>
+        <option>12:00 - 21:00</option>
+        <option>13:00 - 22:00</option>
+       <option>14:00 - 23:00</option>
+      </select>
     </div>
 
     <div>
       <label>휴게시간</label>
-      <input id="breakTime" value="14:00 - 15:00">
+      <select id="breakTime">
+        <option>14:00 - 15:00</option>
+        <option>13:00 - 14:00</option>
+        <option>15:00 - 16:00</option>
+        <option>16:00 - 17:00</option>
+        <option>휴게 30분</option>
+        <option>휴게 60분</option>
+        <option>휴게 90분</option>
+      </select>
     </div>
 
     <div>
-      <label>기본급</label>
-      <input id="basicPay" value="2156880">
+  <label>기본급</label>
+  <input
+    id="basicPay"
+    value="2,156,880"
+    oninput="formatMoneyInput(this); calcTotalPay();">
+</div>
+
+<div>
+  <label>연장수당</label>
+  <input
+    id="overtimePay"
+    value="665,640"
+    oninput="formatMoneyInput(this); calcTotalPay();">
+</div>
+
+<div>
+  <label>직무수당</label>
+  <input
+    id="dutyPay"
+    value="27,480"
+    oninput="formatMoneyInput(this); calcTotalPay();">
+</div>
+
+<div>
+  <label>직책수당</label>
+  <input
+    id="positionPay"
+    value="0"
+    oninput="formatMoneyInput(this); calcTotalPay();">
+</div>
+
+<div>
+  <label>식대</label>
+  <input
+    id="mealPay"
+    value="0"
+    oninput="formatMoneyInput(this); calcTotalPay();">
+</div>
+
+<div>
+  <label>월급총액</label>
+  <input
+    id="totalPay"
+    value="2,850,000"
+    readonly>
+</div>
+    <div>
+      <label>급여계좌 은행</label>
+      <input id="bankName" placeholder="예: 국민은행">
     </div>
 
     <div>
-      <label>연장수당</label>
-      <input id="overtimePay" value="665640">
-    </div>
-
-    <div>
-      <label>직무수당</label>
-      <input id="dutyPay" value="27480">
-    </div>
-
-    <div>
-      <label>직책수당</label>
-      <input id="positionPay" value="0">
-    </div>
-
-    <div>
-      <label>식대</label>
-      <input id="mealPay" value="0">
-    </div>
-
-    <div>
-      <label>월급총액</label>
-      <input id="totalPay" value="2850000">
+      <label>급여계좌번호</label>
+      <input id="bankAccount" placeholder="예: 123456-78-901234">
     </div>
   </div>
 
@@ -161,6 +204,12 @@ canvas{width:100%;height:170px;border:1px solid #ccc;border-radius:12px;backgrou
     <tr><td>식대</td><td id="cMealPay"></td><td>복리후생</td></tr>
     <tr><th>월급총액</th><th id="cTotalPay"></th><th>상기 금액의 합계</th></tr>
   </table>
+
+  <p>
+  ④ 급여계좌 :
+  <span id="cBankName"></span>
+  <span id="cBankAccount"></span>
+</p>
 
   <p>② 회사는 매월 1일부터 말일까지 산정한 급여를 익월 10일 직원 명의의 은행계좌로 지급한다.</p>
   <p>③ 급여 지급 시 갑근세, 사회보험료 등 법정 공제액은 공제 후 지급한다.</p>
@@ -236,6 +285,40 @@ function todayText(){
   return d.getFullYear() + "년 " + (d.getMonth()+1) + "월 " + d.getDate() + "일";
 }
 
+function onlyNumber(value){
+  return Number(
+    String(value || "")
+      .replace(/[^0-9]/g,"")
+  ) || 0;
+}
+
+function formatMoneyInput(el){
+
+  const num =
+    onlyNumber(el.value);
+
+  el.value =
+    num.toLocaleString("ko-KR");
+}
+
+function calcTotalPay(){
+
+  const total =
+
+    onlyNumber(document.getElementById("basicPay").value) +
+
+    onlyNumber(document.getElementById("overtimePay").value) +
+
+    onlyNumber(document.getElementById("dutyPay").value) +
+
+    onlyNumber(document.getElementById("positionPay").value) +
+
+    onlyNumber(document.getElementById("mealPay").value);
+
+  document.getElementById("totalPay").value =
+    total.toLocaleString("ko-KR");
+}
+
 const API_URL =
 "https://script.google.com/macros/s/앱스크립트주소/exec";
 
@@ -267,6 +350,8 @@ function createContract(){
   document.getElementById("cBirth").innerText = document.getElementById("birth").value;
   document.getElementById("cAddress").innerText = document.getElementById("address").value;
   document.getElementById("cPhone").innerText = document.getElementById("phone").value;
+  document.getElementById("cBankName").innerText =  document.getElementById("bankName").value;
+  document.getElementById("cBankAccount").innerText =  document.getElementById("bankAccount").value;
 
   window.scrollTo({top:document.getElementById("contractPaper").offsetTop,behavior:"smooth"});
 }

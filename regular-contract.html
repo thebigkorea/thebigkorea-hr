@@ -6,23 +6,26 @@
 <title>정규직 근로계약서</title>
 
 <style>
-body{margin:0;background:#f4f6f9;font-family:Pretendard,sans-serif;color:#222;}
-.wrap{max-width:920px;margin:0 auto;padding:20px;}
-.card,.paper{background:#fff;border-radius:24px;padding:28px;margin-bottom:22px;box-shadow:0 6px 18px rgba(0,0,0,.08);}
-.title{font-size:34px;font-weight:900;color:#173b72;margin-bottom:22px;}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-label{font-size:16px;font-weight:900;}
-input,select{width:100%;box-sizing:border-box;padding:16px;border:1px solid #ddd;border-radius:14px;font-size:18px;margin-top:8px;}
-button{width:100%;border:0;border-radius:18px;padding:20px;background:#174a9c;color:#fff;font-size:22px;font-weight:900;margin-top:20px;}
-.green{background:#0f7b46;}
-.paper h1{text-align:center;font-size:30px;}
-.paper h3{margin-top:24px;border-bottom:2px solid #eee;padding-bottom:8px;}
-.paper p{line-height:1.8;}
-table{width:100%;border-collapse:collapse;margin:14px 0;}
-th,td{border:1px solid #ccc;padding:10px;text-align:center;}
-.sign-area{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px;}
-.sign-box{border:1px solid #ddd;border-radius:16px;padding:16px;min-height:180px;}
-canvas{width:100%;height:180px;border:1px solid #ccc;border-radius:14px;background:#fff;}
+body{margin:0;background:#f4f6f9;font-family:Pretendard,sans-serif;color:#222}
+.wrap{max-width:920px;margin:0 auto;padding:20px}
+.card,.paper{background:#fff;border-radius:24px;padding:28px;margin-bottom:22px;box-shadow:0 6px 18px rgba(0,0,0,.08)}
+.title{font-size:34px;font-weight:900;color:#173b72;margin-bottom:22px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+label{font-size:16px;font-weight:900}
+input,select{width:100%;box-sizing:border-box;padding:16px;border:1px solid #ddd;border-radius:14px;font-size:18px;margin-top:8px}
+button{width:100%;border:0;border-radius:18px;padding:20px;background:#174a9c;color:#fff;font-size:22px;font-weight:900;margin-top:20px}
+.green{background:#0f7b46}
+.paper h1{text-align:center;font-size:30px}
+.paper h3{margin-top:24px;border-bottom:2px solid #eee;padding-bottom:8px}
+.paper p{line-height:1.8}
+table{width:100%;border-collapse:collapse;margin:14px 0}
+th,td{border:1px solid #ccc;padding:10px;text-align:center}
+.sign-area{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px}
+.sign-box{border:1px solid #ddd;border-radius:16px;padding:16px;min-height:220px}
+.stamp{width:95px;margin-top:10px}
+canvas{width:100%;height:180px;border:1px solid #ccc;border-radius:14px;background:#fff}
+.link-box{display:none;background:#eef7f1;border-radius:18px;padding:18px;margin-top:18px}
+.link-box input{background:#fff}
 @media(max-width:700px){.grid,.sign-area{grid-template-columns:1fr}.paper{font-size:14px}}
 </style>
 </head>
@@ -34,7 +37,6 @@ canvas{width:100%;height:180px;border:1px solid #ccc;border-radius:14px;backgrou
   <div class="title">정규직 근로계약서 생성</div>
 
   <div class="grid">
-
     <div>
       <label>점포</label>
       <select id="storeName">
@@ -47,12 +49,12 @@ canvas{width:100%;height:180px;border:1px solid #ccc;border-radius:14px;backgrou
 
     <div>
       <label>직원명</label>
-      <input id="empName">
+      <input id="empName" placeholder="예: 홍길동">
     </div>
 
     <div>
       <label>연락처</label>
-      <input id="phone">
+      <input id="phone" placeholder="예: 01012345678">
     </div>
 
     <div>
@@ -62,7 +64,7 @@ canvas{width:100%;height:180px;border:1px solid #ccc;border-radius:14px;backgrou
 
     <div>
       <label>주소</label>
-      <input id="address">
+      <input id="address" placeholder="주소 입력">
     </div>
 
     <div>
@@ -116,7 +118,7 @@ canvas{width:100%;height:180px;border:1px solid #ccc;border-radius:14px;backgrou
 
     <div>
       <label>연장수당</label>
-      <<input id="overtimePay" placeholder="예: 665,640" oninput="formatMoneyInput(this); calcTotalPay();">
+      <input id="overtimePay" placeholder="예: 665,640" oninput="formatMoneyInput(this); calcTotalPay();">
     </div>
 
     <div>
@@ -148,10 +150,16 @@ canvas{width:100%;height:180px;border:1px solid #ccc;border-radius:14px;backgrou
       <label>급여계좌번호</label>
       <input id="bankAccount" placeholder="예: 123456-78-901234">
     </div>
-
   </div>
 
-  <button onclick="createContract()">계약서 생성</button>
+  <button onclick="createContract()">정규직 근로계약서 생성</button>
+  <button class="green" onclick="saveContractAndCreateLink()">계약 저장 및 직원 링크 생성</button>
+
+  <div id="contractLinkBox" class="link-box">
+    <label>직원에게 보낼 전자서명 링크</label>
+    <input id="contractLink" readonly>
+    <button onclick="copyContractLink()">링크 복사</button>
+  </div>
 </div>
 
 <div class="paper" id="contractPaper">
@@ -230,6 +238,7 @@ canvas{width:100%;height:180px;border:1px solid #ccc;border-radius:14px;backgrou
       <p>상호 : <span id="cCompanyStore"></span></p>
       <p>대표자 : 박병호</p>
       <p>주소 : 서울시 송파구 올림픽로 300, 5층</p>
+      <img src="stamp.png" class="stamp">
     </div>
 
     <div class="sign-box">
@@ -262,13 +271,16 @@ canvas{width:100%;height:180px;border:1px solid #ccc;border-radius:14px;backgrou
 const API_URL =
 "https://script.google.com/macros/s/AKfycbyriJGrYUjjWwnnb7L8HEUHgoRXXo_ma-aOTQi8fqpVomQfxbmBE18YH9LmWEHrKENsWA/exec";
 
+const BASE_URL =
+"https://thebigkorea.github.io/thebigkorea-hr/regular-contract.html";
+
 function onlyNumber(value){
   return Number(String(value || "").replace(/[^0-9]/g,"")) || 0;
 }
 
 function formatMoneyInput(el){
   const num = onlyNumber(el.value);
-  el.value = num.toLocaleString("ko-KR");
+  el.value = num ? num.toLocaleString("ko-KR") : "";
 }
 
 function calcTotalPay(){
@@ -280,7 +292,7 @@ function calcTotalPay(){
     onlyNumber(document.getElementById("mealPay").value);
 
   document.getElementById("totalPay").value =
-    total.toLocaleString("ko-KR");
+    total ? total.toLocaleString("ko-KR") : "";
 }
 
 function changeJobDuty(){
@@ -298,7 +310,8 @@ function changeJobDuty(){
 }
 
 function won(v){
-  return onlyNumber(v).toLocaleString("ko-KR") + "원";
+  const num = onlyNumber(v);
+  return num ? num.toLocaleString("ko-KR") + "원" : "0원";
 }
 
 function todayText(){
@@ -345,6 +358,68 @@ async function apiRequest(data){
   return await response.json();
 }
 
+function getContractData(){
+  return {
+    contractType:"정규직",
+    store:document.getElementById("storeName").value,
+    name:document.getElementById("empName").value,
+    phone:document.getElementById("phone").value,
+    birth:document.getElementById("birth").value,
+    address:document.getElementById("address").value,
+    startDate:document.getElementById("startDate").value,
+    jobDuty:document.getElementById("jobDuty").value,
+    workTime:document.getElementById("workTime").value,
+    breakTime:document.getElementById("breakTime").value,
+    basicPay:onlyNumber(document.getElementById("basicPay").value),
+    overtimePay:onlyNumber(document.getElementById("overtimePay").value),
+    dutyPay:onlyNumber(document.getElementById("dutyPay").value),
+    positionPay:onlyNumber(document.getElementById("positionPay").value),
+    mealPay:onlyNumber(document.getElementById("mealPay").value),
+    totalPay:onlyNumber(document.getElementById("totalPay").value),
+    bankName:document.getElementById("bankName").value,
+    bankAccount:document.getElementById("bankAccount").value
+  };
+}
+
+async function saveContractAndCreateLink(){
+  createContract();
+
+  const data = getContractData();
+
+  if(!data.name || !data.phone){
+    alert("직원명과 연락처를 입력하세요.");
+    return;
+  }
+
+  try{
+    const result = await apiRequest({
+      action:"saveContractDraft",
+      data:data,
+      baseUrl:BASE_URL
+    });
+
+    if(!result.success){
+      alert(result.message || "계약 저장 실패");
+      return;
+    }
+
+    document.getElementById("contractLinkBox").style.display = "block";
+    document.getElementById("contractLink").value = result.contractUrl;
+
+    alert("계약 저장 및 직원 링크가 생성되었습니다.");
+  }catch(err){
+    console.error(err);
+    alert("계약 저장 실패");
+  }
+}
+
+function copyContractLink(){
+  const input = document.getElementById("contractLink");
+  input.select();
+  document.execCommand("copy");
+  alert("링크가 복사되었습니다.");
+}
+
 async function completeContract(){
   if(!document.getElementById("agreeCheck").checked){
     alert("전자계약 동의가 필요합니다.");
@@ -354,24 +429,7 @@ async function completeContract(){
   try{
     const result = await apiRequest({
       action:"saveRegularContract",
-      store:document.getElementById("storeName").value,
-      name:document.getElementById("empName").value,
-      phone:document.getElementById("phone").value,
-      birth:document.getElementById("birth").value,
-      address:document.getElementById("address").value,
-      startDate:document.getElementById("startDate").value,
-      jobDuty:document.getElementById("jobDuty").value,
-      workTime:document.getElementById("workTime").value,
-      breakTime:document.getElementById("breakTime").value,
-      basicPay:onlyNumber(document.getElementById("basicPay").value),
-      overtimePay:onlyNumber(document.getElementById("overtimePay").value),
-      dutyPay:onlyNumber(document.getElementById("dutyPay").value),
-      positionPay:onlyNumber(document.getElementById("positionPay").value),
-      mealPay:onlyNumber(document.getElementById("mealPay").value),
-      totalPay:onlyNumber(document.getElementById("totalPay").value),
-      bankName:document.getElementById("bankName").value,
-      bankAccount:document.getElementById("bankAccount").value,
-      contractType:"정규직"
+      ...getContractData()
     });
 
     if(!result.success){
@@ -380,8 +438,7 @@ async function completeContract(){
     }
 
     alert("전자계약 완료 및 직원등록 완료");
-  }
-  catch(err){
+  }catch(err){
     console.error(err);
     alert("저장 실패");
   }
@@ -394,7 +451,6 @@ let drawing = false;
 canvas.addEventListener("mousedown", e => {drawing=true; ctx.beginPath();});
 canvas.addEventListener("mouseup", e => drawing=false);
 canvas.addEventListener("mousemove", draw);
-
 canvas.addEventListener("touchstart", e => {drawing=true; ctx.beginPath(); e.preventDefault();});
 canvas.addEventListener("touchend", e => drawing=false);
 canvas.addEventListener("touchmove", e => {draw(e.touches[0]); e.preventDefault();});
@@ -415,14 +471,7 @@ function clearSignature(){
 }
 
 window.addEventListener("load", function(){
-  ["basicPay","overtimePay","dutyPay","positionPay","mealPay"].forEach(function(id){
-    const el = document.getElementById(id);
-    if(el) formatMoneyInput(el);
-  });
-
-  calcTotalPay();
   changeJobDuty();
-  createContract();
 });
 </script>
 

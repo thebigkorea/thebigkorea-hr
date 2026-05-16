@@ -7,24 +7,23 @@
 
 <style>
 body{margin:0;background:#f4f6f9;font-family:Pretendard,sans-serif;color:#222;}
-.wrap{max-width:760px;margin:0 auto;padding:18px;}
-.card,.paper{background:#fff;border-radius:22px;padding:22px;margin-bottom:18px;box-shadow:0 6px 18px rgba(0,0,0,.08);}
-.title{font-size:30px;font-weight:900;color:#173b72;margin-bottom:16px;}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-label{font-weight:800;font-size:14px;}
-input,select{width:100%;box-sizing:border-box;padding:13px;border:1px solid #ddd;border-radius:12px;font-size:16px;margin-top:6px;margin-bottom:10px;}
-button{width:100%;border:0;border-radius:16px;padding:17px;background:#174a9c;color:#fff;font-size:19px;font-weight:900;margin-top:10px;}
+.wrap{max-width:920px;margin:0 auto;padding:20px;}
+.card,.paper{background:#fff;border-radius:24px;padding:28px;margin-bottom:22px;box-shadow:0 6px 18px rgba(0,0,0,.08);}
+.title{font-size:34px;font-weight:900;color:#173b72;margin-bottom:22px;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+label{font-size:16px;font-weight:900;}
+input,select{width:100%;box-sizing:border-box;padding:16px;border:1px solid #ddd;border-radius:14px;font-size:18px;margin-top:8px;}
+button{width:100%;border:0;border-radius:18px;padding:20px;background:#174a9c;color:#fff;font-size:22px;font-weight:900;margin-top:20px;}
 .green{background:#0f7b46;}
-.paper h1{text-align:center;font-size:28px;}
-.paper h3{margin-top:22px;border-bottom:2px solid #eee;padding-bottom:6px;}
-.paper p{line-height:1.7;}
-table{width:100%;border-collapse:collapse;margin:10px 0;}
-th,td{border:1px solid #ccc;padding:9px;text-align:center;}
-.sign-area{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px;}
-.sign-box{border:1px solid #ddd;border-radius:14px;padding:14px;min-height:170px;}
-canvas{width:100%;height:170px;border:1px solid #ccc;border-radius:12px;background:#fff;}
-.hidden{display:none;}
-@media(max-width:640px){.grid,.sign-area{grid-template-columns:1fr}.paper{font-size:14px}}
+.paper h1{text-align:center;font-size:30px;}
+.paper h3{margin-top:24px;border-bottom:2px solid #eee;padding-bottom:8px;}
+.paper p{line-height:1.8;}
+table{width:100%;border-collapse:collapse;margin:14px 0;}
+th,td{border:1px solid #ccc;padding:10px;text-align:center;}
+.sign-area{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px;}
+.sign-box{border:1px solid #ddd;border-radius:16px;padding:16px;min-height:180px;}
+canvas{width:100%;height:180px;border:1px solid #ccc;border-radius:14px;background:#fff;}
+@media(max-width:700px){.grid,.sign-area{grid-template-columns:1fr}.paper{font-size:14px}}
 </style>
 </head>
 
@@ -35,6 +34,7 @@ canvas{width:100%;height:170px;border:1px solid #ccc;border-radius:12px;backgrou
   <div class="title">정규직 근로계약서 생성</div>
 
   <div class="grid">
+
     <div>
       <label>점포</label>
       <select id="storeName">
@@ -53,12 +53,11 @@ canvas{width:100%;height:170px;border:1px solid #ccc;border-radius:12px;backgrou
     <div>
       <label>연락처</label>
       <input id="phone">
-      
     </div>
 
     <div>
       <label>생년월일</label>
-      <input id="birth" placeholder="예: 1990-06-20">
+      <input id="birth" type="date">
     </div>
 
     <div>
@@ -73,7 +72,15 @@ canvas{width:100%;height:170px;border:1px solid #ccc;border-radius:12px;backgrou
 
     <div>
       <label>업무내용</label>
-      <input id="jobDuty" value="매장 운영 및 관리업무">
+      <select id="jobDutySelect" onchange="changeJobDuty()">
+        <option value="매장 운영 및 관리업무">매장 운영 및 관리업무</option>
+        <option value="홀 서비스 업무">홀 서비스 업무</option>
+        <option value="주방 조리 업무">주방 조리 업무</option>
+        <option value="주방 보조 업무">주방 보조 업무</option>
+        <option value="계산 및 고객응대 업무">계산 및 고객응대 업무</option>
+        <option value="기타">직접 입력</option>
+      </select>
+      <input id="jobDuty" value="매장 운영 및 관리업무" style="display:none;" placeholder="업무내용 직접 입력">
     </div>
 
     <div>
@@ -85,7 +92,7 @@ canvas{width:100%;height:170px;border:1px solid #ccc;border-radius:12px;backgrou
         <option>11:00 - 20:00</option>
         <option>12:00 - 21:00</option>
         <option>13:00 - 22:00</option>
-       <option>14:00 - 23:00</option>
+        <option>14:00 - 23:00</option>
       </select>
     </div>
 
@@ -103,52 +110,35 @@ canvas{width:100%;height:170px;border:1px solid #ccc;border-radius:12px;backgrou
     </div>
 
     <div>
-  <label>기본급</label>
-  <input
-    id="basicPay"
-    value="2,156,880"
-    oninput="formatMoneyInput(this); calcTotalPay();">
-</div>
+      <label>기본급</label>
+      <input id="basicPay" value="2,156,880" oninput="formatMoneyInput(this); calcTotalPay();">
+    </div>
 
-<div>
-  <label>연장수당</label>
-  <input
-    id="overtimePay"
-    value="665,640"
-    oninput="formatMoneyInput(this); calcTotalPay();">
-</div>
+    <div>
+      <label>연장수당</label>
+      <input id="overtimePay" value="665,640" oninput="formatMoneyInput(this); calcTotalPay();">
+    </div>
 
-<div>
-  <label>직무수당</label>
-  <input
-    id="dutyPay"
-    value="27,480"
-    oninput="formatMoneyInput(this); calcTotalPay();">
-</div>
+    <div>
+      <label>직무수당</label>
+      <input id="dutyPay" value="27,480" oninput="formatMoneyInput(this); calcTotalPay();">
+    </div>
 
-<div>
-  <label>직책수당</label>
-  <input
-    id="positionPay"
-    value="0"
-    oninput="formatMoneyInput(this); calcTotalPay();">
-</div>
+    <div>
+      <label>직책수당</label>
+      <input id="positionPay" value="0" oninput="formatMoneyInput(this); calcTotalPay();">
+    </div>
 
-<div>
-  <label>식대</label>
-  <input
-    id="mealPay"
-    value="0"
-    oninput="formatMoneyInput(this); calcTotalPay();">
-</div>
+    <div>
+      <label>식대</label>
+      <input id="mealPay" value="0" oninput="formatMoneyInput(this); calcTotalPay();">
+    </div>
 
-<div>
-  <label>월급총액</label>
-  <input
-    id="totalPay"
-    value="2,850,000"
-    readonly>
-</div>
+    <div>
+      <label>월급총액</label>
+      <input id="totalPay" value="2,850,000" readonly>
+    </div>
+
     <div>
       <label>급여계좌 은행</label>
       <input id="bankName" placeholder="예: 국민은행">
@@ -158,6 +148,7 @@ canvas{width:100%;height:170px;border:1px solid #ccc;border-radius:12px;backgrou
       <label>급여계좌번호</label>
       <input id="bankAccount" placeholder="예: 123456-78-901234">
     </div>
+
   </div>
 
   <button onclick="createContract()">계약서 생성</button>
@@ -167,7 +158,7 @@ canvas{width:100%;height:170px;border:1px solid #ccc;border-radius:12px;backgrou
   <h1>근로계약서</h1>
 
   <p>
-    <b id="cStoreName">한국의집 롯데월드몰점</b>(이하 “회사”라 한다)과
+    <b id="cStoreName"></b>(이하 “회사”라 한다)과
     근로자 <b id="cEmpName"></b>(이하 “직원”이라 한다)은 다음과 같이 근로계약을 체결하고 이를 성실히 이행할 것을 약정한다.
   </p>
 
@@ -205,14 +196,9 @@ canvas{width:100%;height:170px;border:1px solid #ccc;border-radius:12px;backgrou
     <tr><th>월급총액</th><th id="cTotalPay"></th><th>상기 금액의 합계</th></tr>
   </table>
 
-  <p>
-  ④ 급여계좌 :
-  <span id="cBankName"></span>
-  <span id="cBankAccount"></span>
-</p>
-
   <p>② 회사는 매월 1일부터 말일까지 산정한 급여를 익월 10일 직원 명의의 은행계좌로 지급한다.</p>
   <p>③ 급여 지급 시 갑근세, 사회보험료 등 법정 공제액은 공제 후 지급한다.</p>
+  <p>④ 급여계좌 : <span id="cBankName"></span> <span id="cBankAccount"></span></p>
 
   <h3>제6조 제출서류</h3>
   <p>직원은 주민등록등본, 보건증, 통장사본, 신분증 사본 등 회사가 요청하는 서류를 제출한다.</p>
@@ -235,10 +221,7 @@ canvas{width:100%;height:170px;border:1px solid #ccc;border-radius:12px;backgrou
   <h3>제12조 기타사항</h3>
   <p>본 계약서에 명시되지 않은 사항은 근로기준법, 관계법령, 취업규칙 및 판례에 따른다.</p>
 
-  <p style="text-align:center;margin-top:28px;">
-    본인은 위 근로계약의 내용을 확인하고 전자계약 방식에 동의합니다.
-  </p>
-
+  <p style="text-align:center;margin-top:28px;">본인은 위 근로계약의 내용을 확인하고 전자계약 방식에 동의합니다.</p>
   <p style="text-align:center;font-weight:900;" id="cToday"></p>
 
   <div class="sign-area">
@@ -246,7 +229,7 @@ canvas{width:100%;height:170px;border:1px solid #ccc;border-radius:12px;backgrou
       <h4>[회사]</h4>
       <p>상호 : <span id="cCompanyStore"></span></p>
       <p>대표자 : 박병호</p>
-      <p>주소 : <span id="cCompanyAddress">서울시 송파구 올림픽로 300, 5층</span></p>
+      <p>주소 : 서울시 송파구 올림픽로 300, 5층</p>
     </div>
 
     <div class="sign-box">
@@ -276,54 +259,52 @@ canvas{width:100%;height:170px;border:1px solid #ccc;border-radius:12px;backgrou
 </div>
 
 <script>
-function won(v){
-  return Number(String(v || "0").replace(/[^0-9]/g,"")).toLocaleString("ko-KR") + "원";
-}
-
-function todayText(){
-  const d = new Date();
-  return d.getFullYear() + "년 " + (d.getMonth()+1) + "월 " + d.getDate() + "일";
-}
+const API_URL =
+"https://script.google.com/macros/s/AKfycbyriJGrYUjjWwnnb7L8HEUHgoRXXo_ma-aOTQi8fqpVomQfxbmBE18YH9LmWEHrKENsWA/exec";
 
 function onlyNumber(value){
-  return Number(
-    String(value || "")
-      .replace(/[^0-9]/g,"")
-  ) || 0;
+  return Number(String(value || "").replace(/[^0-9]/g,"")) || 0;
 }
 
 function formatMoneyInput(el){
-
-  const num =
-    onlyNumber(el.value);
-
-  el.value =
-    num.toLocaleString("ko-KR");
+  const num = onlyNumber(el.value);
+  el.value = num.toLocaleString("ko-KR");
 }
 
 function calcTotalPay(){
-
   const total =
-
     onlyNumber(document.getElementById("basicPay").value) +
-
     onlyNumber(document.getElementById("overtimePay").value) +
-
     onlyNumber(document.getElementById("dutyPay").value) +
-
     onlyNumber(document.getElementById("positionPay").value) +
-
     onlyNumber(document.getElementById("mealPay").value);
 
   document.getElementById("totalPay").value =
     total.toLocaleString("ko-KR");
 }
 
-const API_URL =
-"https://script.google.com/macros/s/앱스크립트주소/exec";
+function changeJobDuty(){
+  const select = document.getElementById("jobDutySelect");
+  const input = document.getElementById("jobDuty");
 
+  if(select.value === "기타"){
+    input.style.display = "block";
+    input.value = "";
+    input.focus();
+  }else{
+    input.style.display = "none";
+    input.value = select.value;
+  }
+}
 
+function won(v){
+  return onlyNumber(v).toLocaleString("ko-KR") + "원";
+}
 
+function todayText(){
+  const d = new Date();
+  return d.getFullYear() + "년 " + (d.getMonth()+1) + "월 " + d.getDate() + "일";
+}
 
 function createContract(){
   const store = document.getElementById("storeName").value;
@@ -350,10 +331,60 @@ function createContract(){
   document.getElementById("cBirth").innerText = document.getElementById("birth").value;
   document.getElementById("cAddress").innerText = document.getElementById("address").value;
   document.getElementById("cPhone").innerText = document.getElementById("phone").value;
-  document.getElementById("cBankName").innerText =  document.getElementById("bankName").value;
-  document.getElementById("cBankAccount").innerText =  document.getElementById("bankAccount").value;
+  document.getElementById("cBankName").innerText = document.getElementById("bankName").value;
+  document.getElementById("cBankAccount").innerText = document.getElementById("bankAccount").value;
 
   window.scrollTo({top:document.getElementById("contractPaper").offsetTop,behavior:"smooth"});
+}
+
+async function apiRequest(data){
+  const response = await fetch(API_URL,{
+    method:"POST",
+    body:JSON.stringify(data)
+  });
+  return await response.json();
+}
+
+async function completeContract(){
+  if(!document.getElementById("agreeCheck").checked){
+    alert("전자계약 동의가 필요합니다.");
+    return;
+  }
+
+  try{
+    const result = await apiRequest({
+      action:"saveRegularContract",
+      store:document.getElementById("storeName").value,
+      name:document.getElementById("empName").value,
+      phone:document.getElementById("phone").value,
+      birth:document.getElementById("birth").value,
+      address:document.getElementById("address").value,
+      startDate:document.getElementById("startDate").value,
+      jobDuty:document.getElementById("jobDuty").value,
+      workTime:document.getElementById("workTime").value,
+      breakTime:document.getElementById("breakTime").value,
+      basicPay:onlyNumber(document.getElementById("basicPay").value),
+      overtimePay:onlyNumber(document.getElementById("overtimePay").value),
+      dutyPay:onlyNumber(document.getElementById("dutyPay").value),
+      positionPay:onlyNumber(document.getElementById("positionPay").value),
+      mealPay:onlyNumber(document.getElementById("mealPay").value),
+      totalPay:onlyNumber(document.getElementById("totalPay").value),
+      bankName:document.getElementById("bankName").value,
+      bankAccount:document.getElementById("bankAccount").value,
+      contractType:"정규직"
+    });
+
+    if(!result.success){
+      alert(result.message || "저장 실패");
+      return;
+    }
+
+    alert("전자계약 완료 및 직원등록 완료");
+  }
+  catch(err){
+    console.error(err);
+    alert("저장 실패");
+  }
 }
 
 const canvas = document.getElementById("signaturePad");
@@ -383,88 +414,16 @@ function clearSignature(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
 }
 
-const API_URL =
-"https://script.google.com/macros/s/앱스크립트주소/exec";
+window.addEventListener("load", function(){
+  ["basicPay","overtimePay","dutyPay","positionPay","mealPay"].forEach(function(id){
+    const el = document.getElementById(id);
+    if(el) formatMoneyInput(el);
+  });
 
-async function apiRequest(data){
-
-  const response =
-    await fetch(API_URL,{
-      method:"POST",
-      body:JSON.stringify(data)
-    });
-
-  return await response.json();
-}
-
-async function completeContract(){
-
-  if(!document.getElementById("agreeCheck").checked){
-
-    alert("전자계약 동의가 필요합니다.");
-    return;
-  }
-
-  try{
-
-    const result =
-      await apiRequest({
-
-        action:"saveRegularContract",
-
-        store:
-          document.getElementById("storeName").value,
-
-        name:
-          document.getElementById("empName").value,
-
-        phone:
-          document.getElementById("phone").value,
-
-        birth:
-          document.getElementById("birth").value,
-
-        address:
-          document.getElementById("address").value,
-
-        startDate:
-          document.getElementById("startDate").value,
-
-        basicPay:
-          document.getElementById("basicPay").value,
-
-        overtimePay:
-          document.getElementById("overtimePay").value,
-
-        dutyPay:
-          document.getElementById("dutyPay").value,
-
-        positionPay:
-          document.getElementById("positionPay").value,
-
-        mealPay:
-          document.getElementById("mealPay").value,
-
-        totalPay:
-          document.getElementById("totalPay").value
-      });
-
-    if(!result.success){
-
-      alert(result.message || "저장 실패");
-      return;
-    }
-
-    alert("전자계약 완료 및 직원등록 완료");
-
-  }
-  catch(err){
-
-    console.error(err);
-
-    alert("저장 실패");
-  }
-}
+  calcTotalPay();
+  changeJobDuty();
+  createContract();
+});
 </script>
 
 </body>
